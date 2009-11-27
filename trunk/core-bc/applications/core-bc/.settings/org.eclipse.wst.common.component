@@ -1,0 +1,17 @@
+<project-modules id="moduleCoreId" project-version="1.5.0">
+  <wb-module deploy-name="tasklist-core-bc-app">
+    <wb-resource deploy-path="/" source-path="src/main/application"/>
+    <dependent-module archiveName="log4j-1.2.14.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+    <dependent-module archiveName="tasklist-core-bc-module-intsvc.war" deploy-path="/" handle="module:/resource/tasklist-core-bc-module-intsvc/tasklist-core-bc-module-intsvc">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+    <dependent-module archiveName="tasklist-core-bc-module-portlet.war" deploy-path="/" handle="module:/resource/tasklist-core-bc-module-portlet/tasklist-core-bc-module-portlet">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+    <dependent-module archiveName="tasklist-core-bc-module-web.war" deploy-path="/" handle="module:/resource/tasklist-core-bc-module-web/tasklist-core-bc-module-web">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+  </wb-module>
+</project-modules>
