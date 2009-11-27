@@ -20,6 +20,33 @@
 -->
 <portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
   id="tasklist-core-bc-module-portlet">
+  
+   <portlet>
+    <portlet-name>TaskList</portlet-name>
+    <display-name>Mina uppgifter</display-name>
+    <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>view</portlet-mode>
+      <portlet-mode>edit</portlet-mode>
+    </supports>
+    <supported-locale>sv</supported-locale>
+    <resource-bundle>se.vgregion.portal.tasklist.TaskList</resource-bundle>
+    <portlet-info>
+      <title>Mina uppgifter</title>
+      <short-title>Mina uppgifter</short-title>
+      <keywords>tasklist todo reminders uppgifter</keywords>
+    </portlet-info>
+  </portlet>
+  <default-namespace>http://TaskList/</default-namespace>
+
+  <!-- Used to get remote user. See more info in JSR-286 Section 21.1. -->
+  <user-attribute>
+    <description>User Login Id</description>
+    <name>user.login.id</name>
+  </user-attribute>
+  
 </portlet-app>

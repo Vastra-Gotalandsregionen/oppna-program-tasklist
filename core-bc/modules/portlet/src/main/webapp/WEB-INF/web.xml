@@ -20,12 +20,15 @@
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-  version="2.4">
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
+  version="2.5">
 
-  <display-name>CHANGE ME!</display-name>
-  <description>CHANGE ME!</description>
+  <display-name>Task List</display-name>
+  <description>Task List</description>
 
+  <listener>
+    <listener-class>com.liferay.portal.kernel.servlet.PortletContextListener</listener-class>
+  </listener>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
@@ -43,8 +46,23 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
   
+    <servlet>
+    <servlet-name>TaskList</servlet-name>
+    <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
+    <init-param>
+      <param-name>portlet-class</param-name>
+      <param-value>org.springframework.web.portlet.DispatcherPortlet</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  
   <servlet-mapping>
     <servlet-name>view</servlet-name>
     <url-pattern>/WEB-INF/servlet/view</url-pattern>
+  </servlet-mapping>
+  
+    <servlet-mapping>
+    <servlet-name>TaskList</servlet-name>
+    <url-pattern>/TaskList/*</url-pattern>
   </servlet-mapping>
 </web-app>
