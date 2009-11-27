@@ -41,6 +41,11 @@
           <!-- Lock down plugin version for build reproducibility -->
           <version>2.0.1</version>
         </plugin>
+        <plugin>
+          <groupId>com.google.code.maven-license-plugin</groupId>
+          <artifactId>maven-license-plugin</artifactId>
+          <version>1.4.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
