@@ -15,18 +15,35 @@
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
  */
-package se.vgregion.portal.tasklist.service;
+/**
+ * 
+ */
+package se.vgregion.portal.tasklist.services;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.List;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import se.vgregion.portal.tasklist.domain.Task;
 
-@Retention(RUNTIME)
-@Target(FIELD)
-@Documented
-public @interface Logger {
+/**
+ *
+ */
+public interface TaskListService {
 
+    /**
+     * Retrieve tasks for specified user.
+     * 
+     * @param userId
+     *            User to retrieve tasks for.
+     * @return task list for specified user
+     */
+    List<Task> getTaskList(String userId);
+
+    /**
+     * Persist new task.
+     * 
+     * @param task
+     *            to be added
+     * @return true if persistence is successful, false otherwise.
+     */
+    boolean addTask(Task task);
 }

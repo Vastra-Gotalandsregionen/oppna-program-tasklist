@@ -18,39 +18,29 @@
 /**
  * 
  */
-package se.vgregion.portal.tasklist.service;
+package se.vgregion.portal.tasklist.services;
 
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import se.vgregion.portal.tasklist.domain.Task;
 
 /**
- * @author jonas
  * 
+ * @author jonas
+ * @author david
  */
-public class TaskListServiceImpl implements TaskListService {
-    @se.vgregion.portal.tasklist.service.Logger
-    private Logger logger;
-    @Autowired
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+public class TaskRowMapper implements RowMapper<Task> {
 
-    /**
-     * @param simpleJdbcTemplate
-     *            the simpleJdbcTemplate to set
-     */
-    public void setSimpleJdbcTemplate(SimpleJdbcTemplate simpleJdbcTemplate) {
-        this.simpleJdbcTemplate = simpleJdbcTemplate;
-    }
-
-    /**
-     * @inheritDoc
-     */
     @Override
-    public List<Task> getTaskList(String userId) {
-        throw new UnsupportedOperationException("TODO: Implement this method");
+    /**
+     * {@inheritDoc}
+     */
+    public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Task task = new Task();
+        task.setUserId(rs.getString("userId"));
+        return task;
     }
 }
