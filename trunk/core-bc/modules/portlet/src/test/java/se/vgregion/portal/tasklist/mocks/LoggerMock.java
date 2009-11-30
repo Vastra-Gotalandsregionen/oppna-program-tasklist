@@ -146,7 +146,7 @@ public class LoggerMock implements Logger {
      */
     @Override
     public void error(String msg, Throwable t) {
-        throw new UnsupportedOperationException("TODO: Implement this method");
+        message = msg;
     }
 
     /**

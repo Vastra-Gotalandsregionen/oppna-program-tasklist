@@ -34,7 +34,7 @@
       <portlet-mode>edit</portlet-mode>
     </supports>
     <supported-locale>sv</supported-locale>
-    <resource-bundle>se.vgregion.portal.tasklist.TaskList</resource-bundle>
+    <resource-bundle>se.vgregion.portal.tasklist.taskList</resource-bundle>
     <portlet-info>
       <title>Mina uppgifter</title>
       <short-title>Mina uppgifter</short-title>

@@ -15,7 +15,7 @@
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
  */
-package se.vgregion.portal.tasklist.service;
+package se.vgregion.portal.tasklist.services;
 
 /**
  * Auto injects the underlying implementation of logger into the bean with field

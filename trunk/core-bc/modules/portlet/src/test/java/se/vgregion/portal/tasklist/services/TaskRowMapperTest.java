@@ -18,43 +18,47 @@
 /**
  * 
  */
-package se.vgregion.portal.tasklist.service;
+package se.vgregion.portal.tasklist.services;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+
+import java.sql.SQLException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import se.vgregion.portal.tasklist.domain.Task;
+import se.vgregion.portal.tasklist.services.TaskRowMapper;
 
 /**
- *
+ * @author jonas
+ * @author david
  */
-public class TaskListServiceImplTest {
+public class TaskRowMapperTest {
 
-    /**
-     * 
-     */
-    private static final String userId = "1";
-    private TaskListServiceImpl taskListServiceImpl;
+    private static final String USER_ID_1 = "user-1";
+    private TaskRowMapper taskRowMapper;
+    private MockResultSet mockResultSet;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-        taskListServiceImpl = new TaskListServiceImpl();
+        taskRowMapper = new TaskRowMapper();
+        mockResultSet = new MockResultSet();
+        mockResultSet.getResultMap().put("userId", USER_ID_1);
     }
 
     /**
-     * Test method for
-     * {@link se.vgregion.portal.tasklist.service.TaskListServiceImpl#getTaskList(java.lang.String)}.
+     * Test method for {@link se.vgregion.portal.tasklist.services.TaskRowMapper#mapRow(java.sql.ResultSet, int)}.
+     * 
+     * @throws SQLException
      */
     @Test
-    @Ignore
-    public void testGetTaskList() {
-        List<Task> taskList = taskListServiceImpl.getTaskList(userId);
-        // assertNotNull(taskList);
+    public void testMapRow() throws SQLException {
+        Task mapRow = taskRowMapper.mapRow(mockResultSet, 1);
+        assertEquals(USER_ID_1, mapRow.getUserId());
     }
+
 }

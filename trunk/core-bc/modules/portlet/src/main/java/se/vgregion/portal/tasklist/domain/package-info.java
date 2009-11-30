@@ -16,19 +16,7 @@
  *   Boston, MA 02111-1307  USA
  */
 /**
- * 
+ * Provides domain classes.
  */
-package se.vgregion.portal.tasklist.service;
+package se.vgregion.portal.tasklist.domain;
 
-import java.util.List;
-
-import se.vgregion.portal.tasklist.domain.Task;
-
-/**
- *
- */
-public interface TaskListService {
-
-    public List<Task> getTaskList(String userId);
-
-}
