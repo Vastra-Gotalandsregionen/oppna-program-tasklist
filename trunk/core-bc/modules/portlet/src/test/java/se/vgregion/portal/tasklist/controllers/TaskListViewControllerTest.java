@@ -48,15 +48,13 @@ import se.vgregion.portal.tasklist.services.TaskListService;
 
 /**
  * @author jonas
- * 
+ * @author david
  */
 public class TaskListViewControllerTest {
 
-    private static final String USER_ID = String.valueOf(1);
-
     public static final String ERROR_DATA_ACCESS_ERROR_VALUE = "Kunde ej få kontakt med databasen. Var god försök senare.";
-
     public static final String ERROR_DATA_ACCESS_ERROR = "error.DataAccessError";
+    private static final String USER_ID = String.valueOf(1);
 
     private TaskListViewController taskListViewController;
     private LoggerMock logger;
@@ -124,9 +122,6 @@ public class TaskListViewControllerTest {
         assertEquals(TaskListViewController.VIEW_TASKS, viewTaskListReturnPageName);
     }
 
-    /**
-     * 
-     */
     private void prepareTaskViewListControllerForDataAccessExceptionThrowing() {
         MockTaskListService mockTaskListService = new TaskListViewControllerTest.MockTaskListService();
         mockTaskListService.throwDataAccessException = true;
@@ -151,12 +146,7 @@ public class TaskListViewControllerTest {
         }
     }
 
-    /**
-     * @author jonas
-     * 
-     */
     static class MockTaskListService implements TaskListService {
-
         private boolean throwDataAccessException;
 
         /**

@@ -32,6 +32,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>tasklist-core-bc-composite-svc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tasklist-core-bc-composite-webcomp</artifactId>
       <version>${project.version}</version>
     </dependency>
