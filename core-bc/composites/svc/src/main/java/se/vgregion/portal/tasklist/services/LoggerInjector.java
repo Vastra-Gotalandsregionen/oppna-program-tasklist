@@ -17,11 +17,6 @@
  */
 package se.vgregion.portal.tasklist.services;
 
-/**
- * Auto injects the underlying implementation of logger into the bean with field
- * having annotation Logger.
- * 
- */
 import java.lang.reflect.Field;
 
 import org.slf4j.LoggerFactory;
@@ -29,31 +24,35 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 
+/**
+ * Auto injects the underlying implementation of logger into the bean with field having annotation Logger.
+ * 
+ */
 public class LoggerInjector implements BeanPostProcessor {
-  
-  /**
-   * 
-   * {@inheritDoc}
-   */
-  public Object postProcessAfterInitialization(Object bean, String beanName) {
-    return bean;
-  }
 
-  /**
-   * 
-   * {@inheritDoc}
-   */
-  public Object postProcessBeforeInitialization(final Object bean, String beanName) {
-    ReflectionUtils.doWithFields(bean.getClass(), new FieldCallback() {
-      public void doWith(Field field) throws IllegalAccessException {
-        // make the field accessible if defined private
-        ReflectionUtils.makeAccessible(field);
-        if (field.getAnnotation(Logger.class) != null) {
-          org.slf4j.Logger logger = LoggerFactory.getLogger(bean.getClass());
-          field.set(bean, logger);
-        }
-      }
-    });
-    return bean;
-  }
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        return bean;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public Object postProcessBeforeInitialization(final Object bean, String beanName) {
+        ReflectionUtils.doWithFields(bean.getClass(), new FieldCallback() {
+            public void doWith(Field field) throws IllegalAccessException {
+                // make the field accessible if defined private
+                ReflectionUtils.makeAccessible(field);
+                if (field.getAnnotation(Logger.class) != null) {
+                    org.slf4j.Logger logger = LoggerFactory.getLogger(bean.getClass());
+                    field.set(bean, logger);
+                }
+            }
+        });
+        return bean;
+    }
 }

@@ -20,45 +20,33 @@
  */
 package se.vgregion.portal.tasklist.services;
 
-import static org.junit.Assert.assertEquals;
-
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.springframework.jdbc.core.RowMapper;
 
+import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Task;
-import se.vgregion.portal.tasklist.services.TaskRowMapper;
 
 /**
+ * 
  * @author jonas
  * @author david
  */
-public class TaskRowMapperTest {
-
-    private static final String USER_ID_1 = "user-1";
-    private TaskRowMapper taskRowMapper;
-    private MockResultSet mockResultSet;
+public class TaskRowMapper implements RowMapper<Task> {
 
     /**
-     * @throws java.lang.Exception
+     * {@inheritDoc}
      */
-    @Before
-    public void setUp() throws Exception {
-        taskRowMapper = new TaskRowMapper();
-        mockResultSet = new MockResultSet();
-        mockResultSet.getResultMap().put("userId", USER_ID_1);
-    }
-
-    /**
-     * Test method for {@link se.vgregion.portal.tasklist.services.TaskRowMapper#mapRow(java.sql.ResultSet, int)}.
-     * 
-     * @throws SQLException
-     */
-    @Test
-    public void testMapRow() throws SQLException {
-        Task mapRow = taskRowMapper.mapRow(mockResultSet, 1);
-        assertEquals(USER_ID_1, mapRow.getUserId());
+    @Override
+    public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Task task = new Task();
+        task.setTaskId(rs.getLong("task_id"));
+        task.setUserId(rs.getString("user_id"));
+        task.setDescription(rs.getString("description"));
+        task.setPriority(Priority.valueOf(rs.getString("priority")));
+        task.setDueDate(rs.getDate("due_date"));
+        return task;
     }
 
 }

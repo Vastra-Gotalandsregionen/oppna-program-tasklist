@@ -142,7 +142,7 @@ public class TaskListViewControllerTest {
         return mockRenderRequest;
     }
 
-    class ResourceBundleMock extends ListResourceBundle {
+    static class ResourceBundleMock extends ListResourceBundle {
         private Object[][] contents = new Object[][] { { ERROR_DATA_ACCESS_ERROR, ERROR_DATA_ACCESS_ERROR_VALUE } };
 
         @Override
@@ -155,7 +155,7 @@ public class TaskListViewControllerTest {
      * @author jonas
      * 
      */
-    public class MockTaskListService implements TaskListService {
+    static class MockTaskListService implements TaskListService {
 
         private boolean throwDataAccessException;
 

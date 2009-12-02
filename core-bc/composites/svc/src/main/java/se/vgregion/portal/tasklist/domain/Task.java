@@ -17,7 +17,10 @@
  */
 package se.vgregion.portal.tasklist.domain;
 
-import java.util.Date;
+import java.sql.Date;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Domain object representing a task.
@@ -28,10 +31,10 @@ import java.util.Date;
 public class Task {
 
     private long taskId;
-    private String userId;
-    private String description;
+    private String userId = "";
+    private String description = "";
     private Date dueDate;
-    private Priority priority;
+    private Priority priority = Priority.LOW;
 
     /**
      * @return the taskId
@@ -108,4 +111,43 @@ public class Task {
         this.userId = userId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(taskId);
+        builder.append(userId);
+        builder.append(description);
+        builder.append(dueDate.getTime());
+        builder.append(priority);
+        return builder.toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Task taskObj = (Task) obj;
+
+        EqualsBuilder builder = new EqualsBuilder();
+
+        builder.append(taskId, taskObj.taskId);
+        builder.append(userId, taskObj.userId);
+        builder.append(description, taskObj.description);
+        builder.append(dueDate.getTime(), taskObj.dueDate.getTime());
+        builder.append(priority, taskObj.priority);
+        return builder.isEquals();
+    }
 }

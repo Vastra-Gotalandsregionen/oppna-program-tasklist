@@ -43,8 +43,9 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  * 
  */
 public class TaskListViewController {
+
     /**
-     * Default error message for DataAccessException
+     * Default error message for DataAccessException.
      */
     public static final String ERROR_WHEN_ACCESSING_DATA_SOURCE = "Error when accessing data source";
 
@@ -78,6 +79,19 @@ public class TaskListViewController {
         this.portletConfig = portletConfig;
     }
 
+    /**
+     * Shows active tasks for user.
+     * 
+     * @param model
+     *            ModelMap
+     * @param request
+     *            RenderRequest
+     * @param response
+     *            RenderResponse
+     * @param preferences
+     *            PortletPreferences
+     * @return View name.
+     */
     @RenderMapping
     public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
             PortletPreferences preferences) {
@@ -85,6 +99,7 @@ public class TaskListViewController {
 
         ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
+        @SuppressWarnings("unchecked")
         Map<String, ?> userInfo = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
         String userId = "";
         if (userInfo != null) {
