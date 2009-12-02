@@ -33,7 +33,7 @@ public class Task {
     private long taskId;
     private String userId = "";
     private String description = "";
-    private Date dueDate;
+    private Date dueDate = null;
     private Priority priority = Priority.LOW;
 
     /**
