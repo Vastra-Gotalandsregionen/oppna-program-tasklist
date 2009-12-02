@@ -33,6 +33,12 @@
   </modules>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/main/resources</directory>
+      </testResource>
+    </testResources>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -45,6 +51,14 @@
           <groupId>com.google.code.maven-license-plugin</groupId>
           <artifactId>maven-license-plugin</artifactId>
           <version>1.4.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>**/integrationtest/**</exclude>
+            </excludes>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -225,8 +239,23 @@
       <artifactId>spring-jdbc</artifactId>
       <version>${spring.fw.version}</version>
     </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>8.4-701.jdbc4</version>
+    </dependency>
   </dependencies>
-
   <!--
     Used by "mvn deploy" to deploy artefacts to a central maven repository. Use settings.xml to set username and
     password for this repository, see wagon-svn for more information
@@ -323,6 +352,39 @@
               <optimize>true</optimize>
               <debug>false</debug>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>itest</id>
+      <activation>
+        <property>
+          <name>itest</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-it</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>none</exclude>
+                  </excludes>
+                  <includes>
+                    <include>**/integrationtest/**</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

@@ -14,15 +14,34 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-  <bean id="taskListService" class="se.vgregion.portal.service.TaskListService" />
+  <bean id="taskListService" class="se.vgregion.portal.tasklist.services.TaskListServiceImpl">
+    <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate" />
+    <property name="dataFieldMaxValueIncrementer" ref="dataFieldMaxValueIncrementer" />
+  </bean>
+
+  <bean id="dataFieldMaxValueIncrementer" class="org.springframework.jdbc.support.incrementer.PostgreSQLSequenceMaxValueIncrementer">
+    <property name="dataSource" ref="dataSource" />
+    <property name="incrementerName" value="task_sequence" />
+  </bean>
 
   <!-- Enables annotations -->
   <context:annotation-config />
 
-  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-    <property name="driverClassName" value="" />
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:se/vgregion/portal/tasklist/datasource.properties" />
   </bean>
 
-  <bean id="logger" class="se.vgregion.portal.tasklist.service.LoggerInjector" />
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="${database.driver}" />
+    <property name="url" value="${database.url}" />
+    <property name="username" value="${database.user}" />
+    <property name="password" value="${database.password}" />
+  </bean>
+
+  <bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+    <constructor-arg ref="dataSource" /> 
+  </bean>
+
+  <bean id="logger" class="se.vgregion.portal.tasklist.services.LoggerInjector" />
 
 </beans> 

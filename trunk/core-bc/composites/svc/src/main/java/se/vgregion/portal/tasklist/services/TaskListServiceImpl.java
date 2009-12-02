@@ -19,22 +19,24 @@ package se.vgregion.portal.tasklist.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 import se.vgregion.portal.tasklist.domain.Task;
 
 /**
+ * Implementation of task list service.
+ * 
  * @author jonas
  * @author david
  * 
  */
 public class TaskListServiceImpl implements TaskListService {
-    private static final String SQL = "SELECT * FROM task WHERE userId = ?";
-    @Autowired
+    private static final String SQL = "SELECT task_id, user_id, description, due_date, priority "
+            + "FROM task WHERE user_id = ?";
     private SimpleJdbcTemplate simpleJdbcTemplate;
-    private RowMapper<Task> taskRowMapper;
+    private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
+    private TaskRowMapper taskRowMapper;
 
     /**
      * @param simpleJdbcTemplate
@@ -42,6 +44,14 @@ public class TaskListServiceImpl implements TaskListService {
      */
     public void setSimpleJdbcTemplate(SimpleJdbcTemplate simpleJdbcTemplate) {
         this.simpleJdbcTemplate = simpleJdbcTemplate;
+    }
+
+    /**
+     * @param dataFieldMaxValueIncrementer
+     *            the dataFieldMaxValueIncrementer to set
+     */
+    public void setDataFieldMaxValueIncrementer(DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer) {
+        this.dataFieldMaxValueIncrementer = dataFieldMaxValueIncrementer;
     }
 
     /**
@@ -53,27 +63,27 @@ public class TaskListServiceImpl implements TaskListService {
         return tasks;
     }
 
-    private RowMapper<Task> getTaskRowMapper() {
-        if (taskRowMapper == null) {
-            taskRowMapper = new TaskRowMapper();
-        }
-        return taskRowMapper;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean addTask(Task task) {
-        // TODO Create our own sequence routine (max + 1)
-        int updatedRows = simpleJdbcTemplate.update(
-                "INSERT INTO task (task_id, user_id, description, due_date, priority) "
-                        + "values (NEXT VALUE FOR TASK_SEQUENCE, ?, ?, ?, ?)", task.getUserId(), task
-                        .getDescription(), task.getDueDate(), task.getPriority().getPriorityValue());
+        long nextTaskId = dataFieldMaxValueIncrementer.nextLongValue();
+        int updatedRows = simpleJdbcTemplate
+                .update("INSERT INTO task (task_id, user_id, description, due_date, priority) "
+                        + "values (?, ?, ?, ?, ?)", nextTaskId, task.getUserId(), task.getDescription(), task
+                        .getDueDate(), task.getPriority().toString());
         boolean isTaskAdded = false;
         if (updatedRows == 1) {
             isTaskAdded = true;
         }
         return isTaskAdded;
+    }
+
+    private TaskRowMapper getTaskRowMapper() {
+        if (taskRowMapper == null) {
+            taskRowMapper = new TaskRowMapper();
+        }
+        return taskRowMapper;
     }
 }

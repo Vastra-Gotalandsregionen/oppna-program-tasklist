@@ -15,31 +15,8 @@
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
  */
-package se.vgregion.portal.tasklist.domain;
-
 /**
- * Priority values for a task.
- * 
- * @author jonas
- * @author david
+ * Provides integration test classes.
  */
-public enum Priority {
-    /**
-     * 0 = low priority, 1 = medium priority, 2 = high priority.
-     */
-    LOW(0), MEDIUM(1), HIGH(2);
+package se.vgregion.portal.tasklist.integrationtest;
 
-    /**
-     * @return the priority
-     */
-    public int getPriorityValue() {
-        return priorityValue;
-    }
-
-    private int priorityValue;
-
-    Priority(int priority) {
-        this.priorityValue = priority;
-    }
-
-}

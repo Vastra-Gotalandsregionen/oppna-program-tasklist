@@ -21,14 +21,15 @@
 package se.vgregion.portal.tasklist.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -38,17 +39,17 @@ import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Task;
 
-/**
- *
- */
 public class TaskListServiceImplTest {
+
     private static final String userId = "1";
     private TaskListServiceImpl taskListServiceImpl;
     private MockSimpleJDBCTemplate mockSimpleJdbcTemplate;
+    private MockDataFieldMaxValueIncrementer mockDataFieldMaxValueIncrementer;
 
     /**
      * @throws java.lang.Exception
@@ -57,8 +58,10 @@ public class TaskListServiceImplTest {
     public void setUp() throws Exception {
 
         taskListServiceImpl = new TaskListServiceImpl();
+        mockDataFieldMaxValueIncrementer = new TaskListServiceImplTest.MockDataFieldMaxValueIncrementer();
         mockSimpleJdbcTemplate = new TaskListServiceImplTest.MockSimpleJDBCTemplate();
         taskListServiceImpl.setSimpleJdbcTemplate(mockSimpleJdbcTemplate);
+        taskListServiceImpl.setDataFieldMaxValueIncrementer(mockDataFieldMaxValueIncrementer);
     }
 
     /**
@@ -68,7 +71,8 @@ public class TaskListServiceImplTest {
     @Test
     public void testGetTaskList() {
         List<Task> taskList = taskListServiceImpl.getTaskList(userId);
-        assertEquals("SELECT * FROM task WHERE userId = ?", mockSimpleJdbcTemplate.sql);
+        assertEquals("SELECT task_id, user_id, description, due_date, priority FROM task WHERE user_id = ?",
+                mockSimpleJdbcTemplate.sql);
         assertTrue(mockSimpleJdbcTemplate.rowMapper instanceof TaskRowMapper);
         assertEquals("1", mockSimpleJdbcTemplate.queryParameters[0]);
         assertNotNull(taskList);
@@ -82,17 +86,34 @@ public class TaskListServiceImplTest {
         Task task = new Task();
         task.setUserId("user-1");
         task.setDescription("task description");
-        task.setDueDate(new Date());
+        task.setDueDate(new Date(new java.util.Date().getTime()));
         task.setPriority(Priority.LOW);
         boolean isTaskAdded = taskListServiceImpl.addTask(task);
         assertTrue(isTaskAdded);
+        assertEquals(mockSimpleJdbcTemplate.sql,
+                "INSERT INTO task (task_id, user_id, description, due_date, priority) values (?, ?, ?, ?, ?)");
+        assertEquals(mockSimpleJdbcTemplate.args[0], mockDataFieldMaxValueIncrementer.counter - 1);
+        assertEquals(mockSimpleJdbcTemplate.args[1], task.getUserId());
+        assertEquals(mockSimpleJdbcTemplate.args[2], task.getDescription());
+        assertEquals(mockSimpleJdbcTemplate.args[3], task.getDueDate());
+        assertEquals(mockSimpleJdbcTemplate.args[4], task.getPriority().toString());
     }
 
-    class MockSimpleJDBCTemplate extends SimpleJdbcTemplate {
+    @Test
+    public void testAddTaskNoRowAdded() {
+        mockSimpleJdbcTemplate.affectedRows = 0;
+        boolean isTaskAdded = taskListServiceImpl.addTask(new Task());
+        assertFalse(isTaskAdded);
+        mockSimpleJdbcTemplate.affectedRows = 1;
+    }
+
+    static class MockSimpleJDBCTemplate extends SimpleJdbcTemplate {
         String sql;
         RowMapper<Task> rowMapper;
         Object[] queryParameters;
         List<Task> tasks = new ArrayList<Task>();
+        private Object[] args;
+        int affectedRows = 1;
 
         public MockSimpleJDBCTemplate() {
             super(new MockDataSource());
@@ -109,9 +130,19 @@ public class TaskListServiceImplTest {
             return (List<T>) tasks;
         }
 
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public int update(String sql, Object... args) throws DataAccessException {
+            this.sql = sql;
+            this.args = args;
+            return affectedRows;
+        }
+
     }
 
-    class MockDataSource implements DataSource {
+    static class MockDataSource implements DataSource {
 
         /**
          * @inheritDoc
@@ -178,4 +209,32 @@ public class TaskListServiceImplTest {
         }
     }
 
+    static class MockDataFieldMaxValueIncrementer implements DataFieldMaxValueIncrementer {
+
+        long counter = 0;
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public int nextIntValue() throws DataAccessException {
+            throw new UnsupportedOperationException("TODO: Implement this method");
+        }
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public long nextLongValue() throws DataAccessException {
+            return counter++;
+        }
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public String nextStringValue() throws DataAccessException {
+            throw new UnsupportedOperationException("TODO: Implement this method");
+        }
+    }
 }

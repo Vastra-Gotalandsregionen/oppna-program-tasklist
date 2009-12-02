@@ -15,32 +15,17 @@
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
  */
-/**
- * 
- */
-package se.vgregion.portal.tasklist.services;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.springframework.jdbc.core.RowMapper;
-
-import se.vgregion.portal.tasklist.domain.Task;
+package se.vgregion.portal.tasklist.domain;
 
 /**
+ * Priority values for a task.
  * 
  * @author jonas
  * @author david
  */
-public class TaskRowMapper implements RowMapper<Task> {
-
-    @Override
+public enum Priority {
     /**
-     * {@inheritDoc}
+     * Task priority values.
      */
-    public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Task task = new Task();
-        task.setUserId(rs.getString("userId"));
-        return task;
-    }
+    LOW, MEDIUM, HIGH;
 }

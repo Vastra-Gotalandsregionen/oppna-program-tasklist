@@ -43,15 +43,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author jonas
- * 
+ * @author david
  */
 public class MockResultSet implements ResultSet {
-    private static final Logger logger = LoggerFactory.getLogger(MockResultSet.class);
     private Map<String, Object> resultMap = new HashMap<String, Object>();
 
     /**
@@ -338,7 +334,7 @@ public class MockResultSet implements ResultSet {
      */
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("TODO: Implement this method");
+        return (Date) resultMap.get(columnLabel);
     }
 
     /**
@@ -442,7 +438,7 @@ public class MockResultSet implements ResultSet {
      */
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("TODO: Implement this method");
+        return (Long) resultMap.get(columnLabel);
     }
 
     /**
