@@ -34,9 +34,9 @@ import se.vgregion.portal.tasklist.domain.Task;
 public class TaskListServiceImpl implements TaskListService {
     private static final String SQL = "SELECT task_id, user_id, description, due_date, priority "
             + "FROM task WHERE user_id = ?";
-    private SimpleJdbcTemplate simpleJdbcTemplate;
-    private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
-    private TaskRowMapper taskRowMapper;
+    private SimpleJdbcTemplate simpleJdbcTemplate = null;
+    private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer = null;
+    private TaskRowMapper taskRowMapper = null;
 
     /**
      * @param simpleJdbcTemplate
