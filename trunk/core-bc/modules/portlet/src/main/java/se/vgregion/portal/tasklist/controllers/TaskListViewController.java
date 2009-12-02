@@ -55,15 +55,14 @@ public class TaskListViewController {
     public static final String VIEW_TASKS = "viewTasks";
 
     @se.vgregion.portal.tasklist.services.Logger
-    private Logger logger;
+    private Logger logger = null;
 
     @Autowired
-    private TaskListService taskListService;
+    private TaskListService taskListService = null;
 
-    /**
-     * @param taskListService
-     *            the taskListService to set
-     */
+    @Autowired
+    private PortletConfig portletConfig = null;
+
     public void setTaskListService(TaskListService taskListService) {
         this.taskListService = taskListService;
     }
@@ -71,9 +70,6 @@ public class TaskListViewController {
     public void setLogger(Logger logger) {
         this.logger = logger;
     }
-
-    @Autowired
-    private PortletConfig portletConfig;
 
     public void setPortletConfig(PortletConfig portletConfig) {
         this.portletConfig = portletConfig;
