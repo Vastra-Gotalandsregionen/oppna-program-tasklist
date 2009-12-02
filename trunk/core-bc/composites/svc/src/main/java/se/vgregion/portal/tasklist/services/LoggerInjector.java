@@ -43,16 +43,24 @@ public class LoggerInjector implements BeanPostProcessor {
      * {@inheritDoc}
      */
     public Object postProcessBeforeInitialization(final Object bean, String beanName) {
-        ReflectionUtils.doWithFields(bean.getClass(), new FieldCallback() {
-            public void doWith(Field field) throws IllegalAccessException {
-                // make the field accessible if defined private
-                ReflectionUtils.makeAccessible(field);
-                if (field.getAnnotation(Logger.class) != null) {
-                    org.slf4j.Logger logger = LoggerFactory.getLogger(bean.getClass());
-                    field.set(bean, logger);
-                }
-            }
-        });
+        ReflectionUtils.doWithFields(bean.getClass(), new FieldCallbackImpl(bean));
         return bean;
+    }
+
+    static class FieldCallbackImpl implements FieldCallback {
+        private Object bean;
+
+        FieldCallbackImpl(Object bean) {
+            this.bean = bean;
+        }
+
+        public void doWith(Field field) throws IllegalAccessException {
+            // make the field accessible if defined private
+            ReflectionUtils.makeAccessible(field);
+            if (field.getAnnotation(Logger.class) != null) {
+                org.slf4j.Logger logger = LoggerFactory.getLogger(bean.getClass());
+                field.set(bean, logger);
+            }
+        }
     }
 }
