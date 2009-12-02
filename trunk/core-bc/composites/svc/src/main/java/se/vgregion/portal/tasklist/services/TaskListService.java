@@ -43,7 +43,25 @@ public interface TaskListService {
      * 
      * @param task
      *            to be added
-     * @return true if persistence is successful, false otherwise.
+     * @return true if persistence was successful, false otherwise.
      */
     boolean addTask(Task task);
+
+    /**
+     * Update existing task.
+     * 
+     * @param task
+     *            To be updated.
+     * @return True if task was updated, false otherwise.
+     */
+    boolean updateTask(Task task);
+
+    /**
+     * Delete existing task.
+     * 
+     * @param taskId
+     *            Task id of task to be deleted.
+     * @return true if task is successfully deleted, false otherwise.
+     */
+    boolean deleteTask(long taskId);
 }

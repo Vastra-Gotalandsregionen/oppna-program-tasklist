@@ -107,6 +107,53 @@ public class TaskListServiceImplTest {
         mockSimpleJdbcTemplate.affectedRows = 1;
     }
 
+    @Test
+    public void testUpdateTask() {
+        Task task = new Task();
+        task.setDescription("description");
+        task.setDueDate(new java.sql.Date(new java.util.Date().getTime()));
+        task.setPriority(Priority.HIGH);
+        task.setUserId("user-1");
+
+        mockSimpleJdbcTemplate.affectedRows = 1;
+        boolean isTaskUpdated = taskListServiceImpl.updateTask(task);
+        assertEquals("UPDATE task SET user_id = ?, description = ?, due_date = ?, priority = ? WHERE task_id = ?",
+                mockSimpleJdbcTemplate.sql);
+        assertEquals(task.getUserId(), mockSimpleJdbcTemplate.args[0]);
+        assertEquals(task.getDescription(), mockSimpleJdbcTemplate.args[1]);
+        assertEquals(task.getDueDate(), mockSimpleJdbcTemplate.args[2]);
+        assertEquals(task.getPriority(), mockSimpleJdbcTemplate.args[3]);
+        assertEquals(task.getTaskId(), mockSimpleJdbcTemplate.args[4]);
+        assertTrue(isTaskUpdated);
+        mockSimpleJdbcTemplate.affectedRows = 0;
+    }
+
+    @Test
+    public void testUpdateTaskFailed() {
+        mockSimpleJdbcTemplate.affectedRows = 0;
+        boolean isTaskUpdated = taskListServiceImpl.updateTask(new Task());
+        assertFalse(isTaskUpdated);
+    }
+
+    @Test
+    public void testDeleteTask() {
+        long taskId = 0;
+        mockSimpleJdbcTemplate.affectedRows = 1;
+        boolean isTaskDeleted = taskListServiceImpl.deleteTask(taskId);
+        assertEquals("DELETE FROM task WHERE task_id = ?", mockSimpleJdbcTemplate.sql);
+        assertEquals(taskId, mockSimpleJdbcTemplate.args[0]);
+        assertTrue(isTaskDeleted);
+        mockSimpleJdbcTemplate.affectedRows = 0;
+    }
+
+    @Test
+    public void testDeleteTaskFailed() {
+        long taskId = 0;
+        mockSimpleJdbcTemplate.affectedRows = 0;
+        boolean isTaskDeleted = taskListServiceImpl.deleteTask(taskId);
+        assertFalse(isTaskDeleted);
+    }
+
     static class MockSimpleJDBCTemplate extends SimpleJdbcTemplate {
         String sql;
         RowMapper<Task> rowMapper;
