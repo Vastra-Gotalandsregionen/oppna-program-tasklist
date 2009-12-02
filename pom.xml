@@ -244,17 +244,6 @@
       <artifactId>commons-lang</artifactId>
       <version>2.4</version>
     </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>1.8.0.10</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>8.4-701.jdbc4</version>
-    </dependency>
   </dependencies>
   <!--
     Used by "mvn deploy" to deploy artefacts to a central maven repository. Use settings.xml to set username and
