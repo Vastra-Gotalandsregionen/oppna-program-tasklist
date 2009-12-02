@@ -66,13 +66,34 @@ public class TaskListIntegrationTest {
     }
 
     @Test
-    public void testTaskManagement() throws ParseException {
+    public void testAddAndGetTask() throws ParseException {
         List<Task> tasks = generateTask();
         assertTrue(taskListService.addTask(tasks.get(0)));
         assertTrue(taskListService.addTask(tasks.get(1)));
         List<Task> taskResultList = taskListService.getTaskList(USER_ID);
         assertEquals(tasks.get(0), taskResultList.get(0));
         assertEquals(tasks.get(1), taskResultList.get(1));
+    }
+
+    @Test
+    public void testDeleteTask() throws ParseException {
+        Task task = generateTask().get(0);
+        assertTrue(taskListService.addTask(task));
+        List<Task> taskList = taskListService.getTaskList(task.getUserId());
+        assertEquals(1, taskList.size());
+        assertTrue(taskListService.deleteTask(task.getTaskId()));
+        taskList = taskListService.getTaskList(task.getUserId());
+        assertEquals(0, taskList.size());
+    }
+
+    @Test
+    public void testUpdateTask() throws ParseException {
+        Task task = generateTask().get(0);
+        assertTrue(taskListService.addTask(task));
+        task.setDescription("updated description");
+        assertTrue(taskListService.updateTask(task));
+        List<Task> taskList = taskListService.getTaskList(task.getUserId());
+        assertEquals(task.getDescription(), taskList.get(0).getDescription());
     }
 
     /**

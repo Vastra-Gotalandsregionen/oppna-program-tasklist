@@ -182,5 +182,21 @@ public class TaskListViewControllerTest {
         public boolean addTask(Task task) {
             throw new UnsupportedOperationException("TODO: Implement this method");
         }
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public boolean deleteTask(long taskId) {
+            throw new UnsupportedOperationException("TODO: Implement this method");
+        }
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public boolean updateTask(Task task) {
+            throw new UnsupportedOperationException("TODO: Implement this method");
+        }
     }
 }

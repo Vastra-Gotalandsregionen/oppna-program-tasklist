@@ -32,8 +32,11 @@ import se.vgregion.portal.tasklist.domain.Task;
  * 
  */
 public class TaskListServiceImpl implements TaskListService {
-    private static final String SQL = "SELECT task_id, user_id, description, due_date, priority "
+    private static final String SQL_GET_TASK = "SELECT task_id, user_id, description, due_date, priority "
             + "FROM task WHERE user_id = ?";
+    private static final String SQL_DELETE_TASK = "DELETE FROM task WHERE task_id = ?";
+    private static final String SQL_UPDATE_TASK = "UPDATE task SET "
+            + "user_id = ?, description = ?, due_date = ?, priority = ? WHERE task_id = ?";
     private SimpleJdbcTemplate simpleJdbcTemplate = null;
     private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer = null;
     private TaskRowMapper taskRowMapper = null;
@@ -59,7 +62,7 @@ public class TaskListServiceImpl implements TaskListService {
      */
     @Override
     public List<Task> getTaskList(String userId) {
-        List<Task> tasks = simpleJdbcTemplate.query(SQL, getTaskRowMapper(), userId);
+        List<Task> tasks = simpleJdbcTemplate.query(SQL_GET_TASK, getTaskRowMapper(), userId);
         return tasks;
     }
 
@@ -85,5 +88,24 @@ public class TaskListServiceImpl implements TaskListService {
             taskRowMapper = new TaskRowMapper();
         }
         return taskRowMapper;
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public boolean deleteTask(long taskId) {
+        int affectedRows = simpleJdbcTemplate.update(SQL_DELETE_TASK, taskId);
+        return (affectedRows > 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean updateTask(Task task) {
+        int affectedRows = simpleJdbcTemplate.update(SQL_UPDATE_TASK, task.getUserId(), task.getDescription(),
+                task.getDueDate(), task.getPriority(), task.getTaskId());
+        return (affectedRows > 0);
     }
 }
