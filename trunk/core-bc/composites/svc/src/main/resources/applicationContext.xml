@@ -25,7 +25,7 @@
   </bean>
 
   <!-- Enables annotations -->
-  <context:annotation-config />
+  <context:annotation-config />  
 
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="location" value="classpath:se/vgregion/portal/tasklist/datasource.properties" />
