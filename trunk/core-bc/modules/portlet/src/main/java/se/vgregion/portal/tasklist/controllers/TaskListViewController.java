@@ -17,6 +17,7 @@
  */
 package se.vgregion.portal.tasklist.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -101,20 +102,24 @@ public class TaskListViewController {
         if (userInfo != null) {
             userId = (String) userInfo.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
         }
-        List<Task> taskList;
-        try {
-            taskList = taskListService.getTaskList(userId);
-            model.addAttribute("taskList", taskList);
-        } catch (DataAccessException dataAccessException) {
-            ObjectError objectError;
-            if (bundle != null) {
-                objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
-            } else {
-                objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
+        List<Task> taskList = null;
+        if (!"".equals(userId)) {
+            try {
+                taskList = taskListService.getTaskList(userId);
+            } catch (DataAccessException dataAccessException) {
+                ObjectError objectError;
+                if (bundle != null) {
+                    objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
+                } else {
+                    objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
+                }
+                logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                model.addAttribute("errors", objectError);
             }
-            logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
-            model.addAttribute("errors", objectError);
+        } else {
+            taskList = new ArrayList<Task>();
         }
+        model.addAttribute("taskList", taskList);
         return VIEW_TASKS;
     }
 }

@@ -101,6 +101,16 @@ public class TaskListViewControllerTest {
     }
 
     @Test
+    public void testViewTaskListWithUserIdNull() {
+        MockRenderRequest mockPortletRequest = new MockRenderRequest();
+        MockRenderResponse mockPortletResponse = new MockRenderResponse();
+        String viewTaskList = taskListViewController.viewTaskList(mockModelMap, mockPortletRequest,
+                mockPortletResponse, mockPortletPreferences);
+        assertEquals(0, ((List<Task>) mockModelMap.get("taskList")).size());
+        assertEquals(TaskListViewController.VIEW_TASKS, viewTaskList);
+    }
+
+    @Test
     public void getGetTaskListDataAccessException() {
         prepareTaskViewListControllerForDataAccessExceptionThrowing();
         String viewTaskListReturnPageName = taskListViewController.viewTaskList(mockModelMap, mockPortletRequest,
