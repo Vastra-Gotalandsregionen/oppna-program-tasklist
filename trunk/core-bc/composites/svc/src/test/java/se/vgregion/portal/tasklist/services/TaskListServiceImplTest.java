@@ -42,6 +42,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 
 public class TaskListServiceImplTest {
@@ -71,7 +72,8 @@ public class TaskListServiceImplTest {
     @Test
     public void testGetTaskList() {
         List<Task> taskList = taskListServiceImpl.getTaskList(userId);
-        assertEquals("SELECT task_id, user_id, description, due_date, priority FROM task WHERE user_id = ?",
+        assertEquals(
+                "SELECT task_id, user_id, description, due_date, priority, status FROM task WHERE user_id = ?",
                 mockSimpleJdbcTemplate.sql);
         assertTrue(mockSimpleJdbcTemplate.rowMapper instanceof TaskRowMapper);
         assertEquals("1", mockSimpleJdbcTemplate.queryParameters[0]);
@@ -88,15 +90,17 @@ public class TaskListServiceImplTest {
         task.setDescription("task description");
         task.setDueDate(new Date(new java.util.Date().getTime()));
         task.setPriority(Priority.LOW);
+        task.setStatus(Status.OPEN);
         boolean isTaskAdded = taskListServiceImpl.addTask(task);
         assertTrue(isTaskAdded);
         assertEquals(mockSimpleJdbcTemplate.sql,
-                "INSERT INTO task (task_id, user_id, description, due_date, priority) values (?, ?, ?, ?, ?)");
+                "INSERT INTO task (task_id, user_id, description, due_date, priority, status) values (?, ?, ?, ?, ?, ?)");
         assertEquals(mockSimpleJdbcTemplate.args[0], mockDataFieldMaxValueIncrementer.counter - 1);
         assertEquals(mockSimpleJdbcTemplate.args[1], task.getUserId());
         assertEquals(mockSimpleJdbcTemplate.args[2], task.getDescription());
         assertEquals(mockSimpleJdbcTemplate.args[3], task.getDueDate());
         assertEquals(mockSimpleJdbcTemplate.args[4], task.getPriority().toString());
+        assertEquals(mockSimpleJdbcTemplate.args[5], task.getStatus().toString());
     }
 
     @Test
@@ -117,13 +121,15 @@ public class TaskListServiceImplTest {
 
         mockSimpleJdbcTemplate.affectedRows = 1;
         boolean isTaskUpdated = taskListServiceImpl.updateTask(task);
-        assertEquals("UPDATE task SET user_id = ?, description = ?, due_date = ?, priority = ? WHERE task_id = ?",
+        assertEquals(
+                "UPDATE task SET user_id = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE task_id = ?",
                 mockSimpleJdbcTemplate.sql);
         assertEquals(task.getUserId(), mockSimpleJdbcTemplate.args[0]);
         assertEquals(task.getDescription(), mockSimpleJdbcTemplate.args[1]);
         assertEquals(task.getDueDate(), mockSimpleJdbcTemplate.args[2]);
         assertEquals(task.getPriority(), mockSimpleJdbcTemplate.args[3]);
-        assertEquals(task.getTaskId(), mockSimpleJdbcTemplate.args[4]);
+        assertEquals(task.getStatus(), mockSimpleJdbcTemplate.args[4]);
+        assertEquals(task.getTaskId(), mockSimpleJdbcTemplate.args[5]);
         assertTrue(isTaskUpdated);
         mockSimpleJdbcTemplate.affectedRows = 0;
     }

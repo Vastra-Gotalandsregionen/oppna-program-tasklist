@@ -32,11 +32,13 @@ import se.vgregion.portal.tasklist.domain.Task;
  * 
  */
 public class TaskListServiceImpl implements TaskListService {
-    private static final String SQL_GET_TASK = "SELECT task_id, user_id, description, due_date, priority "
+    private static final String SQL_INSERT_TASK = "INSERT INTO task "
+            + "(task_id, user_id, description, due_date, priority, status) values (?, ?, ?, ?, ?, ?)";
+    private static final String SQL_GET_TASK = "SELECT task_id, user_id, description, due_date, priority, status "
             + "FROM task WHERE user_id = ?";
     private static final String SQL_DELETE_TASK = "DELETE FROM task WHERE task_id = ?";
     private static final String SQL_UPDATE_TASK = "UPDATE task SET "
-            + "user_id = ?, description = ?, due_date = ?, priority = ? WHERE task_id = ?";
+            + "user_id = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE task_id = ?";
     private SimpleJdbcTemplate simpleJdbcTemplate = null;
     private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer = null;
     private TaskRowMapper taskRowMapper = null;
@@ -72,10 +74,8 @@ public class TaskListServiceImpl implements TaskListService {
     @Override
     public boolean addTask(Task task) {
         long nextTaskId = dataFieldMaxValueIncrementer.nextLongValue();
-        int updatedRows = simpleJdbcTemplate
-                .update("INSERT INTO task (task_id, user_id, description, due_date, priority) "
-                        + "values (?, ?, ?, ?, ?)", nextTaskId, task.getUserId(), task.getDescription(), task
-                        .getDueDate(), task.getPriority().toString());
+        int updatedRows = simpleJdbcTemplate.update(SQL_INSERT_TASK, nextTaskId, task.getUserId(), task
+                .getDescription(), task.getDueDate(), task.getPriority().toString(), task.getStatus().toString());
         boolean isTaskAdded = false;
         if (updatedRows == 1) {
             isTaskAdded = true;
@@ -105,7 +105,7 @@ public class TaskListServiceImpl implements TaskListService {
     @Override
     public boolean updateTask(Task task) {
         int affectedRows = simpleJdbcTemplate.update(SQL_UPDATE_TASK, task.getUserId(), task.getDescription(),
-                task.getDueDate(), task.getPriority(), task.getTaskId());
+                task.getDueDate(), task.getPriority(), task.getStatus(), task.getTaskId());
         return (affectedRows > 0);
     }
 }

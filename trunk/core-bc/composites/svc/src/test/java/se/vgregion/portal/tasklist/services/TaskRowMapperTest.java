@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 
 /**
@@ -42,6 +43,7 @@ public class TaskRowMapperTest {
     private static final String DESCRIPTION = "Description 1";
     private static final Date DUE_DATE = new java.sql.Date(new java.util.Date().getTime());
     private static final String PRIORITY = Priority.HIGH.toString();
+    private static final String STATUS = Status.CLOSED.toString();
     private TaskRowMapper taskRowMapper;
     private MockResultSet mockResultSet;
 
@@ -57,6 +59,7 @@ public class TaskRowMapperTest {
         mockResultSet.getResultMap().put("description", DESCRIPTION);
         mockResultSet.getResultMap().put("due_date", DUE_DATE);
         mockResultSet.getResultMap().put("priority", PRIORITY);
+        mockResultSet.getResultMap().put("status", STATUS);
     }
 
     /**
@@ -72,5 +75,6 @@ public class TaskRowMapperTest {
         assertEquals(DESCRIPTION, mapRow.getDescription());
         assertEquals(DUE_DATE, mapRow.getDueDate());
         assertEquals(PRIORITY, mapRow.getPriority().toString());
+        assertEquals(STATUS, mapRow.getStatus().toString());
     }
 }

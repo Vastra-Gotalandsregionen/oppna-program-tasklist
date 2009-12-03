@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 
 /**
@@ -44,8 +45,9 @@ public class TaskRowMapper implements RowMapper<Task> {
         task.setTaskId(rs.getLong("task_id"));
         task.setUserId(rs.getString("user_id"));
         task.setDescription(rs.getString("description"));
-        task.setPriority(Priority.valueOf(rs.getString("priority")));
         task.setDueDate(rs.getDate("due_date"));
+        task.setPriority(Priority.valueOf(rs.getString("priority")));
+        task.setStatus(Status.valueOf(rs.getString("status")));
         return task;
     }
 

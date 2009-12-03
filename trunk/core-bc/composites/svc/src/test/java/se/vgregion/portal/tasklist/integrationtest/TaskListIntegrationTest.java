@@ -36,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 import se.vgregion.portal.tasklist.services.TaskListService;
 
@@ -58,10 +59,12 @@ public class TaskListIntegrationTest {
     public void setUp() {
         simpleJdbcTemplate.getJdbcOperations().execute("DROP TABLE task IF EXISTS");
         simpleJdbcTemplate.getJdbcOperations().execute("DROP SEQUENCE task_sequence IF EXISTS");
-        simpleJdbcTemplate.getJdbcOperations().execute(
-                "CREATE TABLE task (task_id BIGINT NOT NULL, user_id varchar(10) NOT NULL, "
-                        + "description varchar(200) NOT NULL, due_date DATE, priority varchar(10), "
-                        + "CONSTRAINT task_id_pk PRIMARY KEY (task_id))");
+        simpleJdbcTemplate
+                .getJdbcOperations()
+                .execute(
+                        "CREATE TABLE task (task_id BIGINT NOT NULL, user_id varchar(10) NOT NULL, "
+                                + "description varchar(200) NOT NULL, due_date DATE, priority varchar(15), status varchar(15), "
+                                + "CONSTRAINT task_id_pk PRIMARY KEY (task_id))");
         simpleJdbcTemplate.getJdbcOperations().execute("CREATE SEQUENCE task_sequence");
     }
 
@@ -106,6 +109,7 @@ public class TaskListIntegrationTest {
         task1.setDescription("Test description task1");
         task1.setDueDate(createSqlDate());
         task1.setPriority(Priority.HIGH);
+        task1.setStatus(Status.OPEN);
         task1.setUserId(USER_ID);
 
         Task task2 = new Task();
@@ -113,6 +117,7 @@ public class TaskListIntegrationTest {
         task2.setDescription("Test description task2");
         task2.setDueDate(createSqlDate());
         task2.setPriority(Priority.LOW);
+        task2.setStatus(Status.CLOSED);
         task2.setUserId(USER_ID);
 
         return Arrays.asList(task1, task2);
