@@ -31,18 +31,23 @@ import javax.portlet.RenderResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import se.vgregion.portal.tasklist.domain.Task;
 import se.vgregion.portal.tasklist.services.TaskListService;
 
 /**
+ * Displays and allows editing of tasks.
+ * 
  * @author jonas liljenfeldt
  * @author david bennehult
- * 
  */
+@Controller
+@RequestMapping("VIEW")
 public class TaskListViewController {
 
     /**
@@ -92,7 +97,7 @@ public class TaskListViewController {
     @RenderMapping
     public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
             PortletPreferences preferences) {
-        logger.debug("Creating database structure...");
+        // logger.debug("Creating database structure...");
 
         ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
@@ -113,7 +118,7 @@ public class TaskListViewController {
                 } else {
                     objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
                 }
-                logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
                 model.addAttribute("errors", objectError);
             }
         } else {
