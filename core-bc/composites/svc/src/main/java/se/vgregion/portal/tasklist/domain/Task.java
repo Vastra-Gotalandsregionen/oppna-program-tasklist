@@ -35,6 +35,7 @@ public class Task {
     private String description = "";
     private Date dueDate = null;
     private Priority priority = Priority.LOW;
+    private Status status = Status.OPEN;
 
     /**
      * @return the taskId
@@ -112,6 +113,21 @@ public class Task {
     }
 
     /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the status
+     */
+    public Status getStatus() {
+        return status;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -122,6 +138,7 @@ public class Task {
         builder.append(description);
         builder.append(dueDate.getTime());
         builder.append(priority);
+        builder.append(status);
         return builder.toHashCode();
     }
 
@@ -148,6 +165,7 @@ public class Task {
         builder.append(description, taskObj.description);
         builder.append(dueDate.getTime(), taskObj.dueDate.getTime());
         builder.append(priority, taskObj.priority);
+        builder.append(status, taskObj.status);
         return builder.isEquals();
     }
 }

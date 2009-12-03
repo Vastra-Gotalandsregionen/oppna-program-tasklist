@@ -37,6 +37,7 @@ public class TaskTest {
         task1.setDescription("description 1");
         task1.setDueDate(date);
         task1.setPriority(Priority.LOW);
+        task1.setStatus(Status.OPEN);
 
         task2 = new Task();
         task2.setTaskId(0);
@@ -44,6 +45,7 @@ public class TaskTest {
         task2.setDescription("description 1");
         task2.setDueDate(date);
         task2.setPriority(Priority.LOW);
+        task2.setStatus(Status.OPEN);
 
         task3 = new Task();
         task3.setTaskId(1);
@@ -51,6 +53,7 @@ public class TaskTest {
         task3.setDescription("description 2");
         task3.setDueDate(date);
         task3.setPriority(Priority.LOW);
+        task3.setStatus(Status.CLOSED);
     }
 
     /**
@@ -87,6 +90,7 @@ public class TaskTest {
         builder.append(task.getDescription());
         builder.append(task.getDueDate().getTime());
         builder.append(task.getPriority());
+        builder.append(task.getStatus());
         return builder.toHashCode();
     }
 
