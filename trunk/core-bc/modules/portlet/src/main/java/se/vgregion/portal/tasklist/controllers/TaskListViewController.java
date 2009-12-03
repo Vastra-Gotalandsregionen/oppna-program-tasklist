@@ -97,7 +97,7 @@ public class TaskListViewController {
     @RenderMapping
     public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
             PortletPreferences preferences) {
-        // logger.debug("Creating database structure...");
+        logger.debug("Creating database structure...");
 
         ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
@@ -118,7 +118,7 @@ public class TaskListViewController {
                 } else {
                     objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
                 }
-                // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
                 model.addAttribute("errors", objectError);
             }
         } else {
