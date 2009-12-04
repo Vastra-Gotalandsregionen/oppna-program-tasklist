@@ -17,11 +17,15 @@
  */
 package se.vgregion.portal.tasklist.controllers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -35,8 +39,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 import se.vgregion.portal.tasklist.services.TaskListService;
 
@@ -97,16 +106,14 @@ public class TaskListViewController {
     @RenderMapping
     public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
             PortletPreferences preferences) {
-        logger.debug("Creating database structure...");
+        //logger.debug("Creating database structure...");
 
         ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
         @SuppressWarnings("unchecked")
-        Map<String, ?> userInfo = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-        String userId = "";
-        if (userInfo != null) {
-            userId = (String) userInfo.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
-        }
+        Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+        String userId = getUserId(attributes);
+        
         List<Task> taskList = null;
         if (!"".equals(userId)) {
             try {
@@ -118,7 +125,7 @@ public class TaskListViewController {
                 } else {
                     objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
                 }
-                logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                //logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
                 model.addAttribute("errors", objectError);
             }
         } else {
@@ -126,5 +133,35 @@ public class TaskListViewController {
         }
         model.addAttribute("taskList", taskList);
         return VIEW_TASKS;
+    }
+
+    private String getUserId(Map<String, ?> attributes) {
+      String userId = "";
+      if (attributes != null) {
+          userId = (String) attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
+      }
+      return userId;
+    }
+    
+    @ActionMapping
+    public void updateTask(ActionRequest request, @RequestParam String taskId, @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate) {
+      @SuppressWarnings("unchecked")
+      Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+      String userId = getUserId(attributes);
+
+      Task taskToBeUpdated = new Task();
+      taskToBeUpdated.setTaskId(Long.valueOf(taskId));
+      taskToBeUpdated.setDescription(description);
+      taskToBeUpdated.setPriority(Priority.valueOf(priority));
+      taskToBeUpdated.setStatus(Status.OPEN);
+      taskToBeUpdated.setUserId(userId);
+      Date dueDateObj = null;
+      try {
+        dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+      } catch (ParseException e) {
+        logger.warn("Invalid due date.");
+      }
+      taskToBeUpdated.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+      taskListService.updateTask(taskToBeUpdated);
     }
 }

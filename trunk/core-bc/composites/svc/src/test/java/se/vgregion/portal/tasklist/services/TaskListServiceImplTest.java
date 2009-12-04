@@ -127,8 +127,8 @@ public class TaskListServiceImplTest {
         assertEquals(task.getUserId(), mockSimpleJdbcTemplate.args[0]);
         assertEquals(task.getDescription(), mockSimpleJdbcTemplate.args[1]);
         assertEquals(task.getDueDate(), mockSimpleJdbcTemplate.args[2]);
-        assertEquals(task.getPriority(), mockSimpleJdbcTemplate.args[3]);
-        assertEquals(task.getStatus(), mockSimpleJdbcTemplate.args[4]);
+        assertEquals(task.getPriority().toString(), mockSimpleJdbcTemplate.args[3].toString());
+        assertEquals(task.getStatus().toString(), mockSimpleJdbcTemplate.args[4].toString());
         assertEquals(task.getTaskId(), mockSimpleJdbcTemplate.args[5]);
         assertTrue(isTaskUpdated);
         mockSimpleJdbcTemplate.affectedRows = 0;

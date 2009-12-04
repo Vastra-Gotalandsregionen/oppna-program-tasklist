@@ -41,8 +41,8 @@ import se.vgregion.portal.tasklist.domain.Task;
 import se.vgregion.portal.tasklist.services.TaskListService;
 
 /**
- * @author jonas
- * @author david
+ * @author jonas liljenfeldt
+ * @author david bennehult
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:**/applicationContext.xml",
@@ -94,9 +94,18 @@ public class TaskListIntegrationTest {
         Task task = generateTask().get(0);
         assertTrue(taskListService.addTask(task));
         task.setDescription("updated description");
+        task.setDueDate(createSqlDate("2009-12-03"));
+        task.setPriority(Priority.LOW);
+        task.setStatus(Status.CLOSED);
+        String newUserId = "newUser";
+        task.setUserId(newUserId);
         assertTrue(taskListService.updateTask(task));
         List<Task> taskList = taskListService.getTaskList(task.getUserId());
         assertEquals(task.getDescription(), taskList.get(0).getDescription());
+        assertEquals(task.getDueDate().getTime(), taskList.get(0).getDueDate().getTime());
+        assertEquals(task.getPriority(), taskList.get(0).getPriority());
+        assertEquals(task.getStatus(), taskList.get(0).getStatus());
+        assertEquals(task.getUserId(), taskList.get(0).getUserId());
     }
 
     /**
@@ -107,7 +116,7 @@ public class TaskListIntegrationTest {
         Task task1 = new Task();
         task1.setTaskId(0);
         task1.setDescription("Test description task1");
-        task1.setDueDate(createSqlDate());
+        task1.setDueDate(createSqlDate("2009-12-02"));
         task1.setPriority(Priority.HIGH);
         task1.setStatus(Status.OPEN);
         task1.setUserId(USER_ID);
@@ -115,7 +124,7 @@ public class TaskListIntegrationTest {
         Task task2 = new Task();
         task2.setTaskId(1);
         task2.setDescription("Test description task2");
-        task2.setDueDate(createSqlDate());
+        task2.setDueDate(createSqlDate("2009-12-02"));
         task2.setPriority(Priority.LOW);
         task2.setStatus(Status.CLOSED);
         task2.setUserId(USER_ID);
@@ -123,10 +132,10 @@ public class TaskListIntegrationTest {
         return Arrays.asList(task1, task2);
     }
 
-    private Date createSqlDate() throws ParseException {
+    private Date createSqlDate(String dateString) throws ParseException {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        java.util.Date parseDate = formatter.parse("2009-12-02");
+        java.util.Date parseDate = formatter.parse(dateString);
         return new Date(parseDate.getTime());
     }
 }
