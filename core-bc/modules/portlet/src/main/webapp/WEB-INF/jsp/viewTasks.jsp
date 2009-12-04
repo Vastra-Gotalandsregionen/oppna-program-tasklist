@@ -17,16 +17,99 @@
       Boston, MA 02111-1307  USA
 
 --%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet_2_0" %>
-<%@ taglib prefix="spring"  uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form"    uri="http://www.springframework.org/tags/form" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet_2_0"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions'%>
+
+<!-- These YUI dependencies should be retrieved from another source if "vgr theme" is not present in your portal. -->
+<script type="text/javascript" src="/vgr-theme/javascript/yui/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="/vgr-theme/javascript/yui/container-min.js"></script>
+<script type="text/javascript" src="/vgr-theme/javascript/yui/event.js"></script>
+<script type="text/javascript" src="/vgr-theme/javascript/yui/connection.js"></script>
+
+<style type="text/css">
+  <%@include file ="/style/styles.css" %>
+</style>
+
+<portlet:actionURL escapeXml="false" var="formAction" />
+
+<script type="text/javascript">
+	//<!--
+	function init() {
+		// Build overlay1 based on markup, initially hidden, fixed to the center of the viewport, and 300px wide
+		myOverlay = new YAHOO.widget.Overlay("myOverlay", {
+			fixedcenter : true,
+			visible : false,
+			width : "300px"
+		});
+        myOverlay.render(document.body);
+	}
+	YAHOO.util.Event.addListener(window, "load", init);
+
+    function prepareEdit(taskId, description, priority, dueDate) {
+      document.getElementById('taskId').value = taskId;
+      document.getElementById('description').value = description;
+      document.getElementById('priority').value = priority;
+      document.getElementById('dueDate').value = dueDate;
+      myOverlay.show();
+    }
+
+    function updateTask() {
+      myOverlay.hide();
+      var postData = "taskId=" + document.getElementById('taskId').value + 
+      "&description=" + document.getElementById('description').value + 
+      "&priority=" + document.getElementById('priority').value + 
+      "&dueDate=" + document.getElementById('dueDate').value; 
+      var sUrl = '${formAction}';
+      var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+    }
+
+  var handleSuccess = function(o) { 
+     if(o.responseText !== undefined){ 
+        alert("update success!");
+     } 
+  }; 
+
+  var handleFailure = function(o) { 
+     if(o.responseText !== undefined){ 
+        alert("update failure!");
+     } 
+  }; 
+  
+  var callback = { 
+    success:handleSuccess, 
+    failure: handleFailure, 
+    argument: ['foo','bar'] 
+  };
+	  
+	//-->
+</script>
+
+<div class="yui-skin-sam">
 
 <ul class="list tasks">
   <c:forEach items="${taskList}" var="task">
-    <li class="unread">${task.taskId} ${task.userId} ${task.description} ${task.status} ${task.dueDate} ${task.priority}</li>
+    <li><input type="checkbox" onclick="" /> ${task.description} <img src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
+    <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate} ${task.status}
+    </li>
   </c:forEach>
 </ul>
+
+<div id="myOverlay" style="visibility: hidden;">
+<div class="hd">header</div>
+<div class="bd">
+  <form onsubmit="updateTask();">
+    <input type="hidden" id="taskId" name="id"/>
+    <input type="text" id="description" name="description"/>
+    <input type="text" id="priority" name="priority"/>
+    <input type="text" id="dueDate" name="dueDate"/>
+    <input type="submit" value="save" />
+  </form>
+</div>
+<div class="ft">footer</div>
+</div>
+
+</div>

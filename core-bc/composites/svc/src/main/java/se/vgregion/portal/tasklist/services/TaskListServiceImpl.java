@@ -105,7 +105,7 @@ public class TaskListServiceImpl implements TaskListService {
     @Override
     public boolean updateTask(Task task) {
         int affectedRows = simpleJdbcTemplate.update(SQL_UPDATE_TASK, task.getUserId(), task.getDescription(),
-                task.getDueDate(), task.getPriority(), task.getStatus(), task.getTaskId());
+                task.getDueDate(), task.getPriority().toString(), task.getStatus().toString(), task.getTaskId());
         return (affectedRows > 0);
     }
 }
