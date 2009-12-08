@@ -17,6 +17,7 @@
  */
 package se.vgregion.portal.tasklist.controllers;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,12 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +41,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Status;
@@ -59,109 +60,174 @@ import se.vgregion.portal.tasklist.services.TaskListService;
 @RequestMapping("VIEW")
 public class TaskListViewController {
 
-    /**
-     * Default error message for DataAccessException.
-     */
-    public static final String ERROR_WHEN_ACCESSING_DATA_SOURCE = "Error when accessing data source";
+  /**
+   * Default error message for DataAccessException.
+   */
+  public static final String ERROR_WHEN_ACCESSING_DATA_SOURCE = "Error when accessing data source";
 
-    /**
-     * View tasks page name.
-     */
-    public static final String VIEW_TASKS = "viewTasks";
+  /**
+   * View tasks page name.
+   */
+  public static final String VIEW_TASKS = "viewTasks";
 
-    @se.vgregion.portal.tasklist.services.Logger
-    private Logger logger = null;
+  @se.vgregion.portal.tasklist.services.Logger
+  private Logger logger = null;
 
-    @Autowired
-    private TaskListService taskListService = null;
+  @Autowired
+  private TaskListService taskListService = null;
 
-    @Autowired
-    private PortletConfig portletConfig = null;
+  @Autowired
+  private PortletConfig portletConfig = null;
 
-    public void setTaskListService(TaskListService taskListService) {
-        this.taskListService = taskListService;
-    }
+  public void setTaskListService(TaskListService taskListService) {
+    this.taskListService = taskListService;
+  }
 
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
+  public void setLogger(Logger logger) {
+    this.logger = logger;
+  }
 
-    public void setPortletConfig(PortletConfig portletConfig) {
-        this.portletConfig = portletConfig;
-    }
+  public void setPortletConfig(PortletConfig portletConfig) {
+    this.portletConfig = portletConfig;
+  }
 
-    /**
-     * Shows active tasks for user.
-     * 
-     * @param model
-     *            ModelMap
-     * @param request
-     *            RenderRequest
-     * @param response
-     *            RenderResponse
-     * @param preferences
-     *            PortletPreferences
-     * @return View name.
-     */
-    @RenderMapping
-    public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
-            PortletPreferences preferences) {
-        //logger.debug("Creating database structure...");
+  /**
+   * Shows active tasks for user.
+   * 
+   * @param model ModelMap
+   * @param request RenderRequest
+   * @param response RenderResponse
+   * @param preferences PortletPreferences
+   * @return View name.
+   */
+  @RenderMapping()
+  public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
+      PortletPreferences preferences) {
+    // logger.debug("Creating database structure...");
 
-        ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
+    ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
-        @SuppressWarnings("unchecked")
-        Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-        String userId = getUserId(attributes);
-        
-        List<Task> taskList = null;
-        if (!"".equals(userId)) {
-            try {
-                taskList = taskListService.getTaskList(userId);
-            } catch (DataAccessException dataAccessException) {
-                ObjectError objectError;
-                if (bundle != null) {
-                    objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
-                } else {
-                    objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
-                }
-                //logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
-                model.addAttribute("errors", objectError);
-            }
-        } else {
-            taskList = new ArrayList<Task>();
-        }
-        model.addAttribute("taskList", taskList);
-        return VIEW_TASKS;
-    }
+    @SuppressWarnings("unchecked")
+    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+    String userId = getUserId(attributes);
 
-    private String getUserId(Map<String, ?> attributes) {
-      String userId = "";
-      if (attributes != null) {
-          userId = (String) attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
-      }
-      return userId;
-    }
-    
-    @ActionMapping
-    public void updateTask(ActionRequest request, @RequestParam String taskId, @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate) {
-      @SuppressWarnings("unchecked")
-      Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-      String userId = getUserId(attributes);
-
-      Task taskToBeUpdated = new Task();
-      taskToBeUpdated.setTaskId(Long.valueOf(taskId));
-      taskToBeUpdated.setDescription(description);
-      taskToBeUpdated.setPriority(Priority.valueOf(priority));
-      taskToBeUpdated.setStatus(Status.OPEN);
-      taskToBeUpdated.setUserId(userId);
-      Date dueDateObj = null;
+    List<Task> taskList = null;
+    if (!"".equals(userId)) {
       try {
-        dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
-      } catch (ParseException e) {
-        logger.warn("Invalid due date.");
+        taskList = taskListService.getTaskList(userId);
+      } catch (DataAccessException dataAccessException) {
+        ObjectError objectError;
+        if (bundle != null) {
+          objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
+        } else {
+          objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
+        }
+        // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+        model.addAttribute("errors", objectError);
       }
-      taskToBeUpdated.setDueDate(new java.sql.Date(dueDateObj.getTime()));
-      taskListService.updateTask(taskToBeUpdated);
+    } else {
+      taskList = new ArrayList<Task>();
     }
+    model.addAttribute("taskList", taskList);
+    return VIEW_TASKS;
+  }
+
+  private String getUserId(Map<String, ?> attributes) {
+    String userId = "";
+    if (attributes != null) {
+      userId = (String) attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
+    }
+    return userId;
+  }
+
+  /**
+   * Insert or update task.
+   * 
+   * @param request ResourceRequest
+   * @param response ResourceResponse
+   * @param taskId If empty, task will be added. Updated otherwise.
+   * @param description Task description.
+   * @param priority Task priority.
+   * @param dueDate Task due date.
+   * @throws IOException
+   */
+  @ResourceMapping("save")
+  public void handleRequest(ResourceRequest request, ResourceResponse response, @RequestParam String taskId,
+      @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate,
+      @RequestParam(required = false) String status) throws IOException {
+    @SuppressWarnings("unchecked")
+    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+    String userId = getUserId(attributes);
+
+    Task task = createTaskFromParams(taskId, description, priority, userId, dueDate, status);
+    if ("".equals(taskId)) {
+      taskListService.addTask(task);
+    } else {
+      taskListService.updateTask(task);
+    }
+    List<Task> taskList = taskListService.getTaskList(userId);
+    String generateTaskListxml = generateTaskListxml(taskList);
+    response.setContentType("text/xml");
+    response.getWriter().print(generateTaskListxml);
+  }
+
+  @ResourceMapping("delete")
+  public void deleteTask(ResourceRequest request, ResourceResponse response, @RequestParam long taskId)
+      throws IOException {
+    taskListService.deleteTask(taskId);
+    @SuppressWarnings("unchecked")
+    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+    String userId = getUserId(attributes);
+    List<Task> taskList = taskListService.getTaskList(userId);
+    String generateTaskListxml = generateTaskListxml(taskList);
+    response.setContentType("text/xml");
+    response.getWriter().print(generateTaskListxml);
+  }
+
+  private String generateTaskListxml(List<Task> taskList) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<ul class=\"list tasks\">");
+    for (Task task : taskList) {
+      sb.append("<li>");
+      sb.append("<input type=\"checkbox\" onclick=\"saveTask('" +task.getTaskId()+ "', '" + task.getDescription() + "', '" + task.getPriority() + "', '" + task.getDueDate() + "' , this.checked);\" "+ (task.getStatus() == Status.CLOSED ? "checked='true'" : "") + "\" />");
+      sb.append(task.getDescription());
+      sb.append("<img src=\"/vgr-theme/i/prio-" + task.getPriority() + ".gif\" /> ");
+      sb.append(" <br />");
+      sb.append("<a onclick=\"deleteTask('" + task.getTaskId() + "');\">");
+      sb.append("<img src=\"/vgr-theme/i/icons/delete.png\" />");
+      sb.append("</a>");
+      sb.append("<a onclick=\"prepareEdit('" + task.getTaskId() + "', '" + task.getDescription() + "', '"
+          + task.getPriority() + "', '" + task.getDueDate() + "');\" href=\"#\">");
+      sb.append("<img src=\"/vgr-theme/i/icons/pencil.png\" />");
+      sb.append("</a>");
+      sb.append(task.getDueDate());
+      sb.append("</li>");
+    }
+    sb.append("</ul>");
+    return sb.toString();
+  }
+
+  private Task createTaskFromParams(String taskId, String description, String priority, String userId,
+      String dueDate, String status) {
+    Task task = new Task();
+    if (!"".equals(taskId)) {
+      task.setTaskId(Long.valueOf(taskId));
+    }
+    task.setDescription(description);
+    task.setPriority(Priority.valueOf(priority));
+    task.setUserId(userId);
+    Date dueDateObj = null;
+    try {
+      dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+    } catch (ParseException e) {
+      logger.warn("Invalid due date.");
+    }
+    task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+    if (status != null) {
+      task.setStatus(Status.valueOf(status));
+    } else {
+      task.setStatus(Status.OPEN);
+    }
+    return task;
+  }
 }
