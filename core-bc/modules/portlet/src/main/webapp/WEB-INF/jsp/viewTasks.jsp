@@ -35,6 +35,8 @@
 </style>
 
 <portlet:actionURL escapeXml="false" var="formAction" />
+<portlet:resourceURL id="save" escapeXml="false" var="saveResource"/>
+<portlet:resourceURL id="delete" escapeXml="false" var="deleteResource"/>
 
 <script type="text/javascript">
 	//<!--
@@ -63,19 +65,41 @@
       "&description=" + document.getElementById('description').value + 
       "&priority=" + document.getElementById('priority').value + 
       "&dueDate=" + document.getElementById('dueDate').value; 
-      var sUrl = '${formAction}';
+      var sUrl = '${saveResource}';
       var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
     }
 
+    function deleteTask(taskId) {
+        var postData = "taskId=" + taskId; 
+        var sUrl = '${deleteResource}';
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+    }
+
+    function saveTask(taskId, description, priority, dueDate, status) {
+    	  alert("status:" + status);
+  	 	  var postData = "taskId=" + taskId + 
+          "&description=" + description + 
+          "&priority=" + priority + 
+          "&dueDate=" + dueDate;
+          if (status == true) {
+    		  postData += '&status=CLOSED';
+          } else {
+        	  postData += '&status=OPEN';
+          }     
+          var sUrl = '${saveResource}';
+          var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+    }
+
+
   var handleSuccess = function(o) { 
-     if(o.responseText !== undefined){ 
-        alert("update success!");
-     } 
+    if(o.responseText !== undefined){
+     document.getElementById('taskList').innerHTML = o.responseText;
+    } 
   }; 
 
   var handleFailure = function(o) { 
      if(o.responseText !== undefined){ 
-        alert("update failure!");
+       alert("update failure!");
      } 
   }; 
   
@@ -90,23 +114,27 @@
 
 <div class="yui-skin-sam">
 
-<ul class="list tasks">
-  <c:forEach items="${taskList}" var="task">
-    <li><input type="checkbox" onclick="" /> ${task.description} <img src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
-    <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate} ${task.status}
-    </li>
-  </c:forEach>
-</ul>
+<div id="taskList">
+  <ul class="list tasks">
+    <c:forEach items="${taskList}" var="task">
+      <li>
+          <input type="checkbox" onclick="alert(this.checked);saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);" ${task.status == 'CLOSED' ? 'checked="true"' : ''} "/> ${task.description} <img src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
+          <a onclick="deleteTask('${task.taskId}');"><img src="/vgr-theme/i/icons/delete.png" /></a> <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate} 
+      </li>
+    </c:forEach>
+  </ul>
+</div>
+<a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a>
 
 <div id="myOverlay" style="visibility: hidden;">
 <div class="hd">header</div>
 <div class="bd">
-  <form onsubmit="updateTask();">
+  <form>
     <input type="hidden" id="taskId" name="id"/>
     <input type="text" id="description" name="description"/>
     <input type="text" id="priority" name="priority"/>
     <input type="text" id="dueDate" name="dueDate"/>
-    <input type="submit" value="save" />
+    <input type="button" onclick="updateTask();" value="save" />
   </form>
 </div>
 <div class="ft">footer</div>
