@@ -58,7 +58,7 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         verifyTrue(selenium.isElementPresent("link=Tillgång från mitt skrivbord"));
         selenium.click("link=Kontakter");
         selenium.waitForPageToLoad("10000");
-        selenium.click("link=N&auml;sta");
+        selenium.click("link=N\u000e4sta");
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_2B6b_iframe");
         selenium.selectFrame("relative=up");
         selenium.click("link=Regionkalendern");
