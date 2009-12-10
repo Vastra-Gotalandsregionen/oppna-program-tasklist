@@ -137,8 +137,6 @@
         <configuration>
           <instrumentation>
             <excludes>
-              <exclude>se/vgregion/portal/ros/informationbroker/domain/xmlbinding/*.class</exclude>
-              <exclude>se/vgregion/portal/ros/informationbroker/ws/InformationBrokerClientMock.class</exclude>
             </excludes>
           </instrumentation>
         </configuration>
@@ -341,39 +339,6 @@
               <optimize>true</optimize>
               <debug>false</debug>
             </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>itest</id>
-      <activation>
-        <property>
-          <name>itest</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>surefire-it</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <excludes>
-                    <exclude>none</exclude>
-                  </excludes>
-                  <includes>
-                    <include>**/integrationtest/**</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
