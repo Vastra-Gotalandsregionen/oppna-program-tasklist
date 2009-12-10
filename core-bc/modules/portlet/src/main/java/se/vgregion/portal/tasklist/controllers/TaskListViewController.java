@@ -60,174 +60,207 @@ import se.vgregion.portal.tasklist.services.TaskListService;
 @RequestMapping("VIEW")
 public class TaskListViewController {
 
-  /**
-   * Default error message for DataAccessException.
-   */
-  public static final String ERROR_WHEN_ACCESSING_DATA_SOURCE = "Error when accessing data source";
+    /**
+     * Default error message for DataAccessException.
+     */
+    public static final String ERROR_WHEN_ACCESSING_DATA_SOURCE = "Error when accessing data source";
 
-  /**
-   * View tasks page name.
-   */
-  public static final String VIEW_TASKS = "viewTasks";
+    /**
+     * View tasks page name.
+     */
+    public static final String VIEW_TASKS = "viewTasks";
 
-  @se.vgregion.portal.tasklist.services.Logger
-  private Logger logger = null;
+    @se.vgregion.portal.tasklist.services.Logger
+    private Logger logger = null;
 
-  @Autowired
-  private TaskListService taskListService = null;
+    @Autowired
+    private TaskListService taskListService = null;
 
-  @Autowired
-  private PortletConfig portletConfig = null;
+    @Autowired
+    private PortletConfig portletConfig = null;
 
-  public void setTaskListService(TaskListService taskListService) {
-    this.taskListService = taskListService;
-  }
+    public void setTaskListService(TaskListService taskListService) {
+        this.taskListService = taskListService;
+    }
 
-  public void setLogger(Logger logger) {
-    this.logger = logger;
-  }
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
 
-  public void setPortletConfig(PortletConfig portletConfig) {
-    this.portletConfig = portletConfig;
-  }
+    public void setPortletConfig(PortletConfig portletConfig) {
+        this.portletConfig = portletConfig;
+    }
 
-  /**
-   * Shows active tasks for user.
-   * 
-   * @param model ModelMap
-   * @param request RenderRequest
-   * @param response RenderResponse
-   * @param preferences PortletPreferences
-   * @return View name.
-   */
-  @RenderMapping()
-  public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
-      PortletPreferences preferences) {
-    // logger.debug("Creating database structure...");
+    /**
+     * Shows active tasks for user.
+     * 
+     * @param model
+     *            ModelMap
+     * @param request
+     *            RenderRequest
+     * @param response
+     *            RenderResponse
+     * @param preferences
+     *            PortletPreferences
+     * @return View name.
+     */
+    @RenderMapping()
+    public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
+            PortletPreferences preferences) {
+        // logger.debug("Creating database structure...");
 
-    ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
+        ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
-    @SuppressWarnings("unchecked")
-    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-    String userId = getUserId(attributes);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+        String userId = getUserId(attributes);
 
-    List<Task> taskList = null;
-    if (!"".equals(userId)) {
-      try {
-        taskList = taskListService.getTaskList(userId);
-      } catch (DataAccessException dataAccessException) {
-        ObjectError objectError;
-        if (bundle != null) {
-          objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
+        List<Task> taskList = null;
+        if (!"".equals(userId)) {
+            try {
+                taskList = taskListService.getTaskList(userId);
+            } catch (DataAccessException dataAccessException) {
+                ObjectError objectError;
+                if (bundle != null) {
+                    objectError = new ObjectError("DataAccessError", bundle.getString("error.DataAccessError"));
+                } else {
+                    objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
+                }
+                // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                model.addAttribute("errors", objectError);
+            }
         } else {
-          objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
+            taskList = new ArrayList<Task>();
         }
-        // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
-        model.addAttribute("errors", objectError);
-      }
-    } else {
-      taskList = new ArrayList<Task>();
+        model.addAttribute("taskList", taskList);
+        return VIEW_TASKS;
     }
-    model.addAttribute("taskList", taskList);
-    return VIEW_TASKS;
-  }
 
-  private String getUserId(Map<String, ?> attributes) {
-    String userId = "";
-    if (attributes != null) {
-      userId = (String) attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
+    private String getUserId(Map<String, ?> attributes) {
+        String userId = "";
+        if (attributes != null) {
+            userId = (String) attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
+        }
+        return userId;
     }
-    return userId;
-  }
 
-  /**
-   * Insert or update task.
-   * 
-   * @param request ResourceRequest
-   * @param response ResourceResponse
-   * @param taskId If empty, task will be added. Updated otherwise.
-   * @param description Task description.
-   * @param priority Task priority.
-   * @param dueDate Task due date.
-   * @throws IOException
-   */
-  @ResourceMapping("save")
-  public void handleRequest(ResourceRequest request, ResourceResponse response, @RequestParam String taskId,
-      @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate,
-      @RequestParam(required = false) String status) throws IOException {
-    @SuppressWarnings("unchecked")
-    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-    String userId = getUserId(attributes);
+    /**
+     * Insert or update task.
+     * 
+     * @param request
+     *            ResourceRequest
+     * @param response
+     *            ResourceResponse
+     * @param taskId
+     *            If empty, task will be added. Updated otherwise.
+     * @param description
+     *            Task description.
+     * @param priority
+     *            Task priority.
+     * @param dueDate
+     *            Task due date.
+     * @param status
+     *            Task status.
+     * @throws IOException
+     *             When we can not write to response.
+     */
+    @ResourceMapping("save")
+    public void handleRequest(ResourceRequest request, ResourceResponse response, @RequestParam String taskId,
+            @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate,
+            @RequestParam(required = false) String status) throws IOException {
+        @SuppressWarnings("unchecked")
+        Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+        String userId = getUserId(attributes);
 
-    Task task = createTaskFromParams(taskId, description, priority, userId, dueDate, status);
-    if ("".equals(taskId)) {
-      taskListService.addTask(task);
-    } else {
-      taskListService.updateTask(task);
+        Task task = createTaskFromParams(taskId, description, priority, userId, dueDate, status);
+        if ("".equals(taskId)) {
+            taskListService.addTask(task);
+        } else {
+            taskListService.updateTask(task);
+        }
+        List<Task> taskList = taskListService.getTaskList(userId);
+        String generateTaskListxml = generateTaskListxml(taskList);
+        response.setContentType("text/xml");
+        response.getWriter().print(generateTaskListxml);
     }
-    List<Task> taskList = taskListService.getTaskList(userId);
-    String generateTaskListxml = generateTaskListxml(taskList);
-    response.setContentType("text/xml");
-    response.getWriter().print(generateTaskListxml);
-  }
 
-  @ResourceMapping("delete")
-  public void deleteTask(ResourceRequest request, ResourceResponse response, @RequestParam long taskId)
-      throws IOException {
-    taskListService.deleteTask(taskId);
-    @SuppressWarnings("unchecked")
-    Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
-    String userId = getUserId(attributes);
-    List<Task> taskList = taskListService.getTaskList(userId);
-    String generateTaskListxml = generateTaskListxml(taskList);
-    response.setContentType("text/xml");
-    response.getWriter().print(generateTaskListxml);
-  }
+    /**
+     * Delete specified task.
+     * 
+     * @param request
+     *            ResourceRequest
+     * @param response
+     *            ResourceResponse
+     * @param taskId
+     *            Id of the task.
+     * @throws IOException
+     *             When we can not write to response.
+     */
+    @ResourceMapping("delete")
+    public void deleteTask(ResourceRequest request, ResourceResponse response, @RequestParam long taskId)
+            throws IOException {
+        taskListService.deleteTask(taskId);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
+        String userId = getUserId(attributes);
+        List<Task> taskList = taskListService.getTaskList(userId);
+        String generateTaskListxml = generateTaskListxml(taskList);
+        response.setContentType("text/xml");
+        response.getWriter().print(generateTaskListxml);
+    }
 
-  private String generateTaskListxml(List<Task> taskList) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("<ul class=\"list tasks\">");
-    for (Task task : taskList) {
-      sb.append("<li>");
-      sb.append("<input type=\"checkbox\" onclick=\"saveTask('" +task.getTaskId()+ "', '" + task.getDescription() + "', '" + task.getPriority() + "', '" + task.getDueDate() + "' , this.checked);\" "+ (task.getStatus() == Status.CLOSED ? "checked='true'" : "") + "\" />");
-      sb.append(task.getDescription());
-      sb.append("<img src=\"/vgr-theme/i/prio-" + task.getPriority() + ".gif\" /> ");
-      sb.append(" <br />");
-      sb.append("<a onclick=\"deleteTask('" + task.getTaskId() + "');\">");
-      sb.append("<img src=\"/vgr-theme/i/icons/delete.png\" />");
-      sb.append("</a>");
-      sb.append("<a onclick=\"prepareEdit('" + task.getTaskId() + "', '" + task.getDescription() + "', '"
-          + task.getPriority() + "', '" + task.getDueDate() + "');\" href=\"#\">");
-      sb.append("<img src=\"/vgr-theme/i/icons/pencil.png\" />");
-      sb.append("</a>");
-      sb.append(task.getDueDate());
-      sb.append("</li>");
+    private String generateTaskListxml(List<Task> taskList) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<ul class=\"list tasks\">");
+        for (Task task : taskList) {
+            sb.append("<li>");
+            sb.append("<input type=\"checkbox\" onclick=\"saveTask('" + task.getTaskId() + "', '"
+                    + task.getDescription() + "', '" + task.getPriority() + "', '" + task.getDueDate()
+                    + "' , this.checked);\" " + (task.getStatus() == Status.CLOSED ? "checked='true'" : "")
+                    + "\" />");
+            sb.append(task.getDescription());
+            sb.append("<img src=\"/vgr-theme/i/prio-" + task.getPriority() + ".gif\" /> ");
+            sb.append(" <br />");
+            sb.append("<a onclick=\"deleteTask('" + task.getTaskId() + "');\">");
+            sb.append("<img src=\"/vgr-theme/i/icons/delete.png\" />");
+            sb.append("</a>");
+            sb.append("<a onclick=\"prepareEdit('" + task.getTaskId() + "', '" + task.getDescription() + "', '"
+                    + task.getPriority() + "', '" + task.getDueDate() + "');\" href=\"#\">");
+            sb.append("<img src=\"/vgr-theme/i/icons/pencil.png\" />");
+            sb.append("</a>");
+            sb.append(task.getDueDate());
+            sb.append("</li>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
     }
-    sb.append("</ul>");
-    return sb.toString();
-  }
 
-  private Task createTaskFromParams(String taskId, String description, String priority, String userId,
-      String dueDate, String status) {
-    Task task = new Task();
-    if (!"".equals(taskId)) {
-      task.setTaskId(Long.valueOf(taskId));
+    private Task createTaskFromParams(String taskId, String description, String priority, String userId,
+            String dueDate, String status) {
+        Task task = new Task();
+        if (!"".equals(taskId)) {
+            task.setTaskId(Long.valueOf(taskId));
+        }
+        task.setDescription(description);
+        task.setPriority(Priority.valueOf(priority));
+        task.setUserId(userId);
+        Date dueDateObj = null;
+        try {
+            dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+        } catch (ParseException e) {
+            logger.warn("Invalid due date.");
+        }
+
+        // If we could not parse existing date, assume due date is today.
+        if (dueDateObj == null) {
+            dueDateObj = new Date();
+        }
+        task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+        if (status != null) {
+            task.setStatus(Status.valueOf(status));
+        } else {
+            task.setStatus(Status.OPEN);
+        }
+        return task;
     }
-    task.setDescription(description);
-    task.setPriority(Priority.valueOf(priority));
-    task.setUserId(userId);
-    Date dueDateObj = null;
-    try {
-      dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
-    } catch (ParseException e) {
-      logger.warn("Invalid due date.");
-    }
-    task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
-    if (status != null) {
-      task.setStatus(Status.valueOf(status));
-    } else {
-      task.setStatus(Status.OPEN);
-    }
-    return task;
-  }
 }
