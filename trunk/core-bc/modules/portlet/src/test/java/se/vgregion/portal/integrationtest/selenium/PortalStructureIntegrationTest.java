@@ -31,11 +31,11 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.waitForPageToLoad("100000");
         selenium.type("_58_login", "xxtst1");
         selenium.type("_58_password", "password1");
-        if (selenium.isElementPresent("link=- Ny anvÃ¤ndare")) {
-            selenium.click("link=- Ny anvÃ¤ndare");
+        if (selenium.isElementPresent("link=- Ny användare")) {
+            selenium.click("link=- Ny användare");
         }
-        if (selenium.isElementPresent("link=- GlÃ¶mt lÃ¶senord")) {
-            selenium.click("link=- GlÃ¶mt lÃ¶senord");
+        if (selenium.isElementPresent("link=- Glömt lösenord")) {
+            selenium.click("link=- Glömt lösenord");
         }
         selenium.click("//input[@value='Logga in']");
         selenium.waitForPageToLoad("100000");
@@ -55,11 +55,11 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.click("link=Dokumentarkiv");
         selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("Visa Dokumentbibliotek"));
-        verifyTrue(selenium.isElementPresent("link=TillgÃ¥ng frÃ¥n mitt skrivbord"));
+        verifyTrue(selenium.isElementPresent("link=Tillgång från mitt skrivbord"));
         selenium.click("link=Kontakter");
         selenium.waitForPageToLoad("100000");
-        if (selenium.isElementPresent("link=NÃ¤sta")) {
-            selenium.click("link=NÃ¤sta");
+        if (selenium.isElementPresent("link=Nästa")) {
+            selenium.click("link=Nästa");
         }
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_2B6b_iframe");
         selenium.selectFrame("relative=up");
@@ -77,11 +77,11 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.click("link=Clarity");
         selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("Clarity"));
-        if (selenium.isElementPresent("link=Kom & GÃ¥")) {
-            selenium.click("link=Kom & GÃ¥");
+        if (selenium.isElementPresent("link=Kom & Gå")) {
+            selenium.click("link=Kom & Gå");
         }
         selenium.waitForPageToLoad("100000");
-        verifyTrue(selenium.isTextPresent("KomOGÃ¥"));
+        verifyTrue(selenium.isTextPresent("KomOGå"));
         selenium.click("//ul[@id='nav-main']/li[3]/a/span");
         selenium.waitForPageToLoad("100000");
         selenium.click("link=Utdataplattform");
@@ -99,29 +99,29 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_3Uts_iframe");
         // verifyTrue(selenium.isElementPresent("//img"));
         selenium.selectFrame("relative=up");
-        if (selenium.isElementPresent("link=SjÃ¤lvservice RH")) {
-            selenium.click("link=SjÃ¤lvservice RH");
+        if (selenium.isElementPresent("link=Självservice RH")) {
+            selenium.click("link=Självservice RH");
         }
         selenium.waitForPageToLoad("100000");
-        verifyTrue(selenium.isTextPresent("SjÃ¤lvservice"));
+        verifyTrue(selenium.isTextPresent("Självservice"));
         selenium.click("link=KivAdmin");
         selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("KivAdmin"));
         verifyTrue(selenium.isElementPresent("link=Raindance Portal"));
         selenium.click("//ul[@id='nav-main']/li[4]/a/span");
         selenium.waitForPageToLoad("100000");
-        if (selenium.isElementPresent("link=VÃ¤lkommen")) {
+        if (selenium.isElementPresent("link=Välkommen")) {
             selenium.click("link=VÃ¤lkommen");
         }
         selenium.waitForPageToLoad("100000");
-        if (selenium.isElementPresent("link=LÃ¤kemedelsfÃ¶rteckningen")) {
-            selenium.click("link=LÃ¤kemedelsfÃ¶rteckningen");
+        if (selenium.isElementPresent("link=Läkemedelsförteckningen")) {
+            selenium.click("link=Läkemedelsförteckningen");
         }
         selenium.waitForPageToLoad("100000");
         selenium.click("link=Bild- och funktionsregistret");
         selenium.waitForPageToLoad("100000");
         selenium.type("personId", "a");
-        selenium.click("//input[@value='SÃ¶k']");
+        selenium.click("//input[@value='Sök']");
         selenium.waitForPageToLoad("100000");
         selenium.click("link=Idoc24");
         selenium.waitForPageToLoad("100000");
@@ -132,13 +132,13 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.click("//a[contains(text(),'Hitta')]");
         selenium.waitForPageToLoad("100000");
         selenium.type("q", "a");
-        if (selenium.isElementPresent("//input[@value='SÃ¶k']")) {
-            selenium.click("//input[@value='SÃ¶k']");
+        if (selenium.isElementPresent("//input[@value='Sök']")) {
+            selenium.click("//input[@value='Sök']");
         }
         selenium.waitForPageToLoad("100000");
         selenium.click("//div[2]/div[1]/div[1]/div[1]");
         selenium.click("//div[2]/div[1]/div[1]/div[1]");
-        selenium.click("link=SÃ¶kiKiv");
+        selenium.click("link=SökiKiv");
         selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isElementPresent("advancedLinkText"));
         selenium.click("//ul[@id='nav-main']/li[6]/a/span");
