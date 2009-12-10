@@ -28,7 +28,7 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
 
     public void testPortalStructure() throws Exception {
         selenium.open("/web/guest");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.type("_58_login", "xxtst1");
         selenium.type("_58_password", "password1");
         if (selenium.isElementPresent("link=- Ny användare")) {
@@ -38,111 +38,111 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
             selenium.click("link=- Glömt lösenord");
         }
         selenium.click("//input[@value='Logga in']");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         // USD web service is not too reliable
         // if (selenium.isElementPresent("link=- Uppdatera")) {
         // selenium.click("//input[@value='Uppdatera']");
         // }
-        // selenium.waitForPageToLoad("20000");
+        // selenium.waitForPageToLoad("100000");
         selenium.click("//ul[@id='nav-main']/li[2]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=iNotes");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         selenium.click("link=Webbkonferens");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         selenium.click("link=Dokumentarkiv");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("Visa Dokumentbibliotek"));
         verifyTrue(selenium.isElementPresent("link=Tillgång från mitt skrivbord"));
         selenium.click("link=Kontakter");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         if (selenium.isElementPresent("link=Nästa")) {
             selenium.click("link=Nästa");
         }
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_2B6b_iframe");
         selenium.selectFrame("relative=up");
         selenium.click("link=Regionkalendern");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         selenium.click("link=SAMBO");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         if (selenium.isElementPresent("link=Resebokning")) {
             selenium.click("link=Resebokning");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         selenium.click("link=Clarity");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("Clarity"));
         if (selenium.isElementPresent("link=Kom & Gå")) {
             selenium.click("link=Kom & Gå");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("KomOGå"));
         selenium.click("//ul[@id='nav-main']/li[3]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Utdataplattform");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_Qtm1_iframe");
         verifyTrue(selenium.isElementPresent("loginCancelButtonContainer"));
         selenium.selectFrame("relative=up");
         selenium.click("link=Personaladministration");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=paleko");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isElementPresent("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_m1rH_iframe"));
         selenium.click("link=Fakturaportalen");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.selectFrame("_csiframe_WAR_csiframecoremoduleportlet_INSTANCE_3Uts_iframe");
         // verifyTrue(selenium.isElementPresent("//img"));
         selenium.selectFrame("relative=up");
         if (selenium.isElementPresent("link=Självservice RH")) {
             selenium.click("link=Självservice RH");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("Självservice"));
         selenium.click("link=KivAdmin");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isTextPresent("KivAdmin"));
         verifyTrue(selenium.isElementPresent("link=Raindance Portal"));
         selenium.click("//ul[@id='nav-main']/li[4]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         if (selenium.isElementPresent("link=Välkommen")) {
             selenium.click("link=Välkommen");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         if (selenium.isElementPresent("link=Läkemedelsförteckningen")) {
             selenium.click("link=Läkemedelsförteckningen");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Bild- och funktionsregistret");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.type("personId", "a");
         selenium.click("//input[@value='Sök']");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Idoc24");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=InfoBroker");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("//ul[@id='nav-main']/li[5]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("//a[contains(text(),'Hitta')]");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.type("q", "a");
         if (selenium.isElementPresent("//input[@value='Sök']")) {
             selenium.click("//input[@value='Sök']");
         }
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("//div[2]/div[1]/div[1]/div[1]");
         selenium.click("//div[2]/div[1]/div[1]/div[1]");
         selenium.click("link=SökiKiv");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         verifyTrue(selenium.isElementPresent("advancedLinkText"));
         selenium.click("//ul[@id='nav-main']/li[6]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("xf-32-opsitem2");
         selenium.click("xf-37-opsitem0");
         selenium.click("xf-37-opsitem1");
@@ -159,20 +159,20 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.click("xf-67");
         selenium.click("xf-67");
         selenium.click("xf-83");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("//ul[@id='nav-main']/li[7]/a/span");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Hem");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Kontrollpanel");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Tillbaka till VGRegion");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Mina uppgifter");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Tillbaka till VGRegion");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
         selenium.click("link=Logga ut");
-        selenium.waitForPageToLoad("20000");
+        selenium.waitForPageToLoad("100000");
     }
 }
