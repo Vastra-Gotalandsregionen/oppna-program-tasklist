@@ -28,10 +28,15 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
 
     public void testPortalStructure() throws Exception {
         selenium.open("/web/guest");
+        selenium.waitForPageToLoad("100000");
         selenium.type("_58_login", "xxtst1");
         selenium.type("_58_password", "password1");
-        selenium.click("link=- Ny användare");
-        selenium.click("link=- Glömt lösenord");
+        if (selenium.isElementPresent("link=- Ny användare")) {
+            selenium.click("link=- Ny användare");
+        }
+        if (selenium.isElementPresent("link=- Glömt lösenord")) {
+            selenium.click("link=- Glömt lösenord");
+        }
         selenium.click("//input[@value='Logga in']");
         selenium.waitForPageToLoad("100000");
         selenium.click("//input[@value='Uppdatera']");
