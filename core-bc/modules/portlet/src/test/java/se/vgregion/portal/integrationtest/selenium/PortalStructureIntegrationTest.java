@@ -39,7 +39,10 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         }
         selenium.click("//input[@value='Logga in']");
         selenium.waitForPageToLoad("100000");
-        selenium.click("//input[@value='Uppdatera']");
+        if (selenium.isElementPresent("link=- Glömt lösenord")) {
+            // USD web service is not too reliable
+            selenium.click("//input[@value='Uppdatera']");
+        }
         selenium.waitForPageToLoad("100000");
         selenium.click("//ul[@id='nav-main']/li[2]/a/span");
         selenium.waitForPageToLoad("100000");
