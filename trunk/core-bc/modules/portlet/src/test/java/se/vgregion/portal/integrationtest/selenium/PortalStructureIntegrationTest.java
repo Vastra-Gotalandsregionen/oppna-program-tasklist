@@ -69,7 +69,9 @@ public class PortalStructureIntegrationTest extends SeleneseTestCase {
         selenium.click("link=SAMBO");
         selenium.waitForPageToLoad("20000");
         verifyTrue(selenium.isTextPresent("iNotes"));
-        selenium.click("link=Resebokning");
+        if (selenium.isElementPresent("link=Resebokning")) {
+            selenium.click("link=Resebokning");
+        }
         selenium.waitForPageToLoad("20000");
         verifyTrue(selenium.isTextPresent("iNotes"));
         selenium.click("link=Clarity");
