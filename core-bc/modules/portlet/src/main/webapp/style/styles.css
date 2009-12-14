@@ -19,6 +19,8 @@
 	border: 1px dotted black;
 	padding: 5px;
 	margin: 10px;
+	background: white;
+	z-index: 1;
 }
 
 .yui-overlay .hd {
@@ -48,4 +50,37 @@ ul li, ol li {
 	list-style-image: none;
 	list-style-position: outside;
 	list-style-type: none;
+	/*text-align: left;*/
+}
+
+form#taskForm td {
+  text-align: left;
+}
+
+#taskTable, #taskTable th, #taskTable td{
+	border-bottom: 0;
+}
+
+form#taskForm input, form#taskForm select {
+}
+
+.prioImage {
+	float: right
+}
+
+#taskList .list li a {
+	padding: 2px 2px 2px 10px;
+}
+
+#taskList .list li {
+	padding: 0px 1px 6px;	
+}
+
+.editTask {
+	float: left;
+}
+
+.descriptionLabel {
+	color:#993333;
+	font-weight: bold;
 }
