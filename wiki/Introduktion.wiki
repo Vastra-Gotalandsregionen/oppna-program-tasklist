@@ -10,3 +10,5 @@ För varje uppgift kan du ange en beskrivning, ett klart-datum och prioritet.
 = Teknik =
 
 Portleten är utformad enligt JSR-168/286 med hjälp av Spring Portlet MVC. AJAX används för att ge liv åt det grafiska gränssnittet och därmed krävs att webbläsaren har JavaScript aktiverat. Webbramverket YUI används för det grafiska gränssnittet.
+
+För att lagra uppgifterna används en relationsdatabas. Denna är inte inbäddad i applikationen utan förutsätts finnas tillgänglig i nätverket. Databasanslutningsuppgifterna anges i filen [http://code.google.com/p/oppna-program-tasklist/source/browse/trunk/core-bc/composites/svc/src/main/resources/se/vgregion/portal/tasklist/datasource.properties datasource.properties].
