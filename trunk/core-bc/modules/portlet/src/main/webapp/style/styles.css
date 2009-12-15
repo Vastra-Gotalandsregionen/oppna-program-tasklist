@@ -21,21 +21,9 @@
 	margin: 10px;
 	background: white;
 	z-index: 1;
-}
-
-.yui-overlay .hd {
-	border: 1px solid red;
-	padding: 5px;
-}
-
-.yui-overlay .bd {
-	border: 1px solid green;
-	padding: 5px;
-}
-
-.yui overlay .ft {
-	border: 1px solid blue;
-	padding: 5px;
+/*	position: absolute; 
+    top: 50px; 
+    left: 325px; */
 }
 
 .list .tasks {

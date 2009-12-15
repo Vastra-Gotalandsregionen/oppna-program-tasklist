@@ -24,39 +24,30 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions'%>
 
-<!-- These YUI dependencies should be retrieved from another source if "vgr theme" is not present in your portal. -->
 <script type="text/javascript" src="/vgr-theme/javascript/yui/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="/vgr-theme/javascript/yui/container-min.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/event.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/connection.js"></script>
 
-<script type="text/javascript" src="/vgr-theme/javascript/yui/yahoo-min.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/dom-min.js" ></script>
-
-<script type="text/javascript" src="/vgr-theme/javascript/yui/calendar-min.js"></script>
-<link type="text/css" rel="stylesheet" href="/vgr-theme/javascript/yui/assets/calendar.css">
-
+<link type="text/css" rel="stylesheet" href="/vgr-theme/javascript/yui/assets/calendar.css" />
 
 <style type="text/css">
-  <%@include file ="/style/styles.css" %>
+    <%@ include file="/style/styles.css" %>
 </style>
 
 <portlet:actionURL escapeXml="false" var="formAction" />
-<portlet:resourceURL id="save" escapeXml="false" var="saveResource"/>
-<portlet:resourceURL id="delete" escapeXml="false" var="deleteResource"/>
+<portlet:resourceURL id="save" escapeXml="false" var="saveResource" />
+<portlet:resourceURL id="delete" escapeXml="false" var="deleteResource" />
 
 <script type="text/javascript"><!--
-	//
-	function init() {
-		// Build overlay1 based on markup, initially hidden, fixed to the center of the viewport, and 300px wide
-		myOverlay = new YAHOO.widget.Overlay("myOverlay", {
-			context:["taskList","tl","bl", ["beforeShow", "windowResize"]],  
-			visible : false,
-			width : "300px"
-		});
-        myOverlay.render(document.body);
-	}
-	YAHOO.util.Event.addListener(window, "load", init);
+   function init() {
+      // Build overlay1 based on markup, initially hidden, fixed to the center of the viewport, and 200px wide
+      myOverlay = new YAHOO.widget.Overlay("myOverlayId", {
+          context:["taskList","tl","bl", ["beforeShow", "windowResize"]],  
+          visible : false,
+          width : "220px"
+      });
+      myOverlay.render(document.body);
+   }
+   YAHOO.util.Event.addListener(window, "load", init);
 
     function prepareEdit(taskId, description, priority, dueDate) {
       document.getElementById('taskId').value = taskId;
@@ -66,11 +57,10 @@
       for (var i=0;i<document.taskForm.priority.options.length;i++) {
     	    if (document.taskForm.priority.options[i].value == priority)
     	        document.taskForm.priority.options[i].selected = true;
-    	}
+      }
     	      
-      
+      //document.getElementById('myOverlay').style.display = 'inline';
       document.getElementById('dueDate').value = dueDate;
-      
       myOverlay.show();
     }
 
@@ -88,8 +78,7 @@
             ok=false;
         }
         if(! ok) return;
-        
-      myOverlay.hide();
+
       var postData = "taskId=" + document.getElementById('taskId').value + 
       "&description=" + document.getElementById('description').value + 
       "&priority=" + document.getElementById('priority').value + 
@@ -213,11 +202,9 @@
 
           // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
           if (!calendar) {
-
               calendar = new YAHOO.widget.Calendar("cal", {
                   iframe:false,          // Turn iframe off, since container has iframe support.
                   hide_blank_weeks:true  // Enable, to demonstrate how we handle changing height, using changeContent
-					
                    });
               calendar.cfg.setProperty("WEEKDAYS_SHORT", ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"]);
               calendar.cfg.setProperty("MONTHS_LONG",    ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"]);   
@@ -262,80 +249,64 @@
               calendar.cfg.setProperty("pagedate", seldate[0]);
               calendar.render();
           }
-
           dialog.show();
       });
   });
 
-	//
---></script>
+	//--></script>
 
 <div class="yui-skin-sam">
 
 <div id="taskList">
-  <ul class="list tasks">
-    <c:forEach items="${taskList}" var="task">
-      <li ${task.status == 'CLOSED' ? 'class="done"' : ''}>
-          <input type="checkbox" class="todo" onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);" ${task.status == 'CLOSED' ? 'checked="true"' : ''} "/> <label class="descriptionLabel"> &nbsp;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
-          <div ${task.status == 'CLOSED' ? 'class="hidden"' : ''} ><a onclick="deleteTask('${task.taskId}');"><img src="/vgr-theme/i/icons/delete.png" /></a> <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate} </div>
-      </li>
-    </c:forEach>
-  </ul>
+<ul class="list tasks">
+  <c:forEach items="${taskList}" var="task">
+    <li ${task.status== 'CLOSED' ? 'class="done"' : ''}><input type="checkbox" class="todo"
+      onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);"
+      ${task.status== 'CLOSED' ? 'checked="true" ' : ''} "/> <label class="descriptionLabel">
+    &nbsp;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
+    <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''} ><a onclick="deleteTask('${task.taskId}');"><img
+      src="/vgr-theme/i/icons/delete.png" /></a> <a
+      onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');"
+      class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate}</div>
+    </li>
+  </c:forEach>
+</ul>
 </div>
-<a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a>
+  <a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a> 
+<!--<a href="#" id="prepareLink">Lägg till ny uppgift</a> -->
 
-<div id="myOverlay" style="visibility: hidden;">
-	<fieldset>
-		<legend>Lägg till/ändra uppgift</legend>
-		
-  		<form id="taskForm" name="taskForm">
-  		<table id="taskTable">
-			<tr>
-				<td>
- 				  <input type="hidden" id="taskId" name="taskId" />
-   				  <label for="description">Beskrivning:<em>*</em></label>
-   				 </td>
-   				 <td>
-    				  <input type="text" id="description" name="description"/>
-    			 </td>
-    		</tr>
-    		<tr>
-    			<td>
-    				 <label for="dueDate">Klart datum:<em>*</em></label>
-    			</td>
-    			<td>
-    				<div class="box">
- 						<div class="datefield" >
-    				  		 <input type="text" id="dueDate" name="dueDate" value="" readonly="true" />
-    				  	</div> 
-				    </div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-    				  <label for="priority">Prioritet:</label>
-    			</td>
-    			<td>
-    				  <SELECT id="priority">  
- 							<OPTION VALUE="LOW"  > Låg  
- 							<OPTION VALUE="MEDIUM"> Medium  
- 							<OPTION VALUE="HIGH"> Hög
-					  </SELECT>
-				</td>
-			</tr>
-			<tr>
-				<td>
-    				<input type="button" onclick="updateTask();" value="Spara" />
-    			</td>
-    			<td>
-    			    <input type="button" onclick="cancel();" value="Avbryt" />
-				</td>    			
-			</tr>
-		</table>
-   	</form>
+<div id="myOverlayId" style="visibility:hidden;">
+<fieldset><legend>Lägg till/ändra uppgift</legend>
+
+<form id="taskForm" name="taskForm">
+<table id="taskTable">
+  <tr>
+    <td><input type="hidden" id="taskId" name="taskId" /> <label for="description">Beskrivning:<em>*</em></label>
+    </td>
+    <td><input type="text" id="description" name="description" size="10" /></td>
+  </tr>
+  <tr>
+    <td><label for="dueDate">Klart datum:<em>*</em></label></td>
+    <td>
+    <div class="box">
+    <div class="datefield"><input type="text" id="dueDate" name="dueDate" value="" readonly="true" size="10"
+      class="readOnly" /></div>
+    </div>
+    </td>
+  </tr>
+  <tr>
+    <td><label for="priority">Prioritet:</label></td>
+    <td><SELECT id="priority">
+      <OPTION VALUE="LOW">Låg
+      <OPTION VALUE="MEDIUM">Medium
+      <OPTION VALUE="HIGH">Hög
+    </SELECT></td>
+  </tr>
+  <tr>
+    <td><input type="button" onclick="updateTask();" value="Spara" /></td>
+    <td><input type="button" onclick="cancel();" value="Avbryt" /></td>
+  </tr>
+</table>
+</form>
 </fieldset>
 </div>
-
-
-
-
