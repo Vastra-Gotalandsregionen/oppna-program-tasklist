@@ -22,7 +22,11 @@ package se.vgregion.portal.tasklist.controllers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListResourceBundle;
@@ -40,9 +44,13 @@ import org.springframework.mock.web.portlet.MockPortletConfig;
 import org.springframework.mock.web.portlet.MockPortletPreferences;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.mock.web.portlet.MockRenderResponse;
+import org.springframework.mock.web.portlet.MockResourceRequest;
+import org.springframework.mock.web.portlet.MockResourceResponse;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.ObjectError;
 
+import se.vgregion.portal.tasklist.domain.Priority;
+import se.vgregion.portal.tasklist.domain.Status;
 import se.vgregion.portal.tasklist.domain.Task;
 import se.vgregion.portal.tasklist.mocks.LoggerMock;
 import se.vgregion.portal.tasklist.services.TaskListService;
@@ -63,6 +71,8 @@ public class TaskListViewControllerTest {
     private ModelMap mockModelMap;
     private MockRenderRequest mockPortletRequest;
     private MockRenderResponse mockPortletResponse;
+    private MockResourceRequest mockResourceRequest;
+    private MockResourceResponse mockResourceResponse;
     private MockPortletPreferences mockPortletPreferences;
 
     /**
@@ -82,6 +92,8 @@ public class TaskListViewControllerTest {
         mockPortletRequest = getMockRenderRequest();
         mockPortletResponse = new MockRenderResponse();
         mockPortletResponse.setLocale(new Locale("sv"));
+        mockResourceRequest = getMockResourceRequest();
+        mockResourceResponse = new MockResourceResponse();
         mockPortletPreferences = new MockPortletPreferences();
     }
 
@@ -134,10 +146,91 @@ public class TaskListViewControllerTest {
         assertEquals(TaskListViewController.VIEW_TASKS, viewTaskListReturnPageName);
     }
 
+    @Test
+    public void testHandleRequest() throws IOException {
+        MockTaskListService mockTaskListService = new TaskListViewControllerTest.MockTaskListService();
+        taskListViewController.setTaskListService(mockTaskListService);
+        // Test add task
+        String description = "add description";
+        String priority = "LOW";
+        String dueDate = "2009-12-31";
+        String statusAdd = "OPEN";
+        String statusUpdate = "CLOSED";
+        taskListViewController.handleRequest(mockResourceRequest, mockResourceResponse, "", description, priority,
+                dueDate, statusAdd);
+        // Get task that should have been updated
+        Task taskShatShouldHaveBeenAdded = getTestTaskShatShouldHaveBeenAdded(description, dueDate);
+        assertEquals(taskShatShouldHaveBeenAdded, mockTaskListService.getTaskList(USER_ID).get(0));
+
+        // Test updated task
+        taskListViewController.handleRequest(mockResourceRequest, mockResourceResponse, "1", description,
+                priority, dueDate, statusUpdate);
+        // Get task that should have been updated
+        Task taskShatShouldHaveBeenUpdated = getTestTaskShatShouldHaveBeenUpdated("1", description, dueDate);
+        assertEquals(taskShatShouldHaveBeenUpdated, mockTaskListService.getTaskList(USER_ID).get(0));
+    }
+
+    @Test
+    public void testDeleteTask() throws NumberFormatException, IOException {
+        taskListViewController.deleteTask(mockResourceRequest, mockResourceResponse, Long.parseLong("1"));
+        assertEquals("text/xml", mockResourceResponse.getContentType());
+    }
+
+    /**
+     * @param description
+     * @param dueDate
+     * @return
+     */
+    private Task getTestTaskShatShouldHaveBeenUpdated(String taskId, String description, String dueDate) {
+        Task taskThatShouldHaveBeenUpdated = new Task();
+        taskThatShouldHaveBeenUpdated.setTaskId(Long.parseLong(taskId));
+        taskThatShouldHaveBeenUpdated.setDescription(description);
+        taskThatShouldHaveBeenUpdated.setPriority(Priority.LOW);
+        taskThatShouldHaveBeenUpdated.setUserId(USER_ID);
+        Date dueDateObj = null;
+        try {
+            dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+        } catch (ParseException e) {
+            logger.warn("Invalid due date.");
+        }
+        taskThatShouldHaveBeenUpdated.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+        taskThatShouldHaveBeenUpdated.setStatus(Status.CLOSED);
+        return taskThatShouldHaveBeenUpdated;
+    }
+
+    /**
+     * @param description
+     * @param dueDate
+     */
+    private Task getTestTaskShatShouldHaveBeenAdded(String description, String dueDate) {
+        Task taskThatShouldHaveBeenAdded = new Task();
+        taskThatShouldHaveBeenAdded.setDescription(description);
+        taskThatShouldHaveBeenAdded.setPriority(Priority.LOW);
+        taskThatShouldHaveBeenAdded.setUserId(USER_ID);
+        Date dueDateObj = null;
+        try {
+            dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+        } catch (ParseException e) {
+            logger.warn("Invalid due date.");
+        }
+        taskThatShouldHaveBeenAdded.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+        taskThatShouldHaveBeenAdded.setStatus(Status.OPEN);
+        return taskThatShouldHaveBeenAdded;
+    }
+
     private void prepareTaskViewListControllerForDataAccessExceptionThrowing() {
         MockTaskListService mockTaskListService = new TaskListViewControllerTest.MockTaskListService();
         mockTaskListService.throwDataAccessException = true;
         taskListViewController.setTaskListService(mockTaskListService);
+    }
+
+    private MockResourceRequest getMockResourceRequest() throws ReadOnlyException {
+        MockResourceRequest mockResourceRequest = new MockResourceRequest();
+        // Create user login id attribute.
+        Map<String, String> userInfo = new HashMap<String, String>();
+        userInfo.put(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString(), USER_ID);
+        mockResourceRequest.setAttribute(PortletRequest.USER_INFO, userInfo);
+        return mockResourceRequest;
     }
 
     private MockRenderRequest getMockRenderRequest() throws ReadOnlyException {
@@ -160,6 +253,7 @@ public class TaskListViewControllerTest {
 
     static class MockTaskListService implements TaskListService {
         private boolean throwDataAccessException;
+        private List<Task> taskList = new ArrayList<Task>();
 
         /**
          * @param throwDataAccessException
@@ -180,11 +274,10 @@ public class TaskListViewControllerTest {
                 };
             }
 
-            List<Task> tasks = new ArrayList<Task>();
             if ("1".equals(userId)) {
-                tasks.add(new Task());
+                taskList.add(new Task());
             }
-            return tasks;
+            return taskList;
         }
 
         /**
@@ -192,7 +285,8 @@ public class TaskListViewControllerTest {
          */
         @Override
         public boolean addTask(Task task) {
-            throw new UnsupportedOperationException("TODO: Implement this method");
+            taskList.add(task);
+            return true;
         }
 
         /**
@@ -200,7 +294,10 @@ public class TaskListViewControllerTest {
          */
         @Override
         public boolean deleteTask(long taskId) {
-            throw new UnsupportedOperationException("TODO: Implement this method");
+            if (taskList.size() > 0) {
+                taskList.remove(0);
+            }
+            return true;
         }
 
         /**
@@ -208,7 +305,8 @@ public class TaskListViewControllerTest {
          */
         @Override
         public boolean updateTask(Task task) {
-            throw new UnsupportedOperationException("TODO: Implement this method");
+            taskList.set(0, task);
+            return true;
         }
     }
 }
