@@ -224,7 +224,7 @@ public class TaskListViewController {
             if (task.getStatus() == Status.CLOSED) {
                 sb.append(" checked='true'");
             }
-            sb.append("\" />");
+            sb.append(" />");
             sb.append("<label class=\"descriptionLabel\"> &nbsp;" + task.getDescription() + "</label>");
             sb.append("<img class=\"prioImage\" src=\"/vgr-theme/i/prio-" + task.getPriority() + ".gif\" /> ");
             sb.append(" <br />");

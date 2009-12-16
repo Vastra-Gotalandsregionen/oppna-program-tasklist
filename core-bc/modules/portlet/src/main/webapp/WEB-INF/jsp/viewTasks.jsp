@@ -120,12 +120,14 @@
     if(o.responseText !== undefined){
      document.getElementById('taskList').innerHTML = o.responseText;
     } 
+    myOverlay.hide();
   }; 
 
   var handleFailure = function(o) { 
      if(o.responseText !== undefined){ 
        alert("update failure!");
      } 
+     myOverlay.hide();
   }; 
   
   var callback = { 
