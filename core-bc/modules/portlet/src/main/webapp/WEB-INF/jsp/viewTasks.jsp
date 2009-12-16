@@ -266,7 +266,7 @@
     <li ${task.status== 'CLOSED' ? 'class="done"' : ''}><input type="checkbox" class="todo"
       onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);"
       ${task.status== 'CLOSED' ? 'checked="true" ' : ''} "/> <label class="descriptionLabel">
-    &nbsp;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
+    &#160;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
     <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''} ><a onclick="deleteTask('${task.taskId}');"><img
       src="/vgr-theme/i/icons/delete.png" /></a> <a
       onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');"
