@@ -267,10 +267,13 @@
       onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);"
       ${task.status== 'CLOSED' ? 'checked="true" ' : ''} "/> <label class="descriptionLabel">
     &#160;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" /> <br />
-    <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''} ><a onclick="deleteTask('${task.taskId}');"><img
-      src="/vgr-theme/i/icons/delete.png" /></a> <a
-      onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');"
-      class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a> ${task.dueDate}</div>
+     <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''}>
+      <span>
+      <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a>
+      <a onclick="deleteTask('${task.taskId}');" href="#"><img src="/vgr-theme/i/icons/delete.png" /></a> 
+      &#160;&#160;${task.dueDate}
+      </span>
+      </div>
     </li>
   </c:forEach>
 </ul>
