@@ -225,7 +225,7 @@ public class TaskListViewController {
                 sb.append(" checked='true'");
             }
             sb.append(" />");
-            sb.append("<label class=\"descriptionLabel\"> &nbsp;" + task.getDescription() + "</label>");
+            sb.append("<label class=\"descriptionLabel\"> &#160;" + task.getDescription() + "</label>");
             sb.append("<img class=\"prioImage\" src=\"/vgr-theme/i/prio-" + task.getPriority() + ".gif\" /> ");
             sb.append(" <br />");
             sb.append("<div");
