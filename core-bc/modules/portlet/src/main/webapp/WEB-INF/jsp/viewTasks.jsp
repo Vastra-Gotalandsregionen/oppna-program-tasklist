@@ -179,10 +179,10 @@
 
               dialog = new YAHOO.widget.Dialog("container", {
                   visible:false,
-                  
+                  constraintoviewport:true,
                   context:["dueDate", "tl", "bl"],
                   // buttons:[ {text:"Återställ", handler: resetHandler, isDefault:true}, {text:"Stäng", handler: closeHandler}],
-                  draggable:false,
+                  draggable:true,
                   close:true
               });
               
