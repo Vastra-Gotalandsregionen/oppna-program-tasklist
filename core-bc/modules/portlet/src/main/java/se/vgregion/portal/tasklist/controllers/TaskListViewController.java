@@ -35,6 +35,7 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
@@ -70,8 +71,7 @@ public class TaskListViewController {
      */
     public static final String VIEW_TASKS = "viewTasks";
 
-    @se.vgregion.portal.tasklist.services.Logger
-    private Logger logger = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskListViewController.class);
 
     @Autowired
     private TaskListService taskListService = null;
@@ -81,10 +81,6 @@ public class TaskListViewController {
 
     public void setTaskListService(TaskListService taskListService) {
         this.taskListService = taskListService;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     public void setPortletConfig(PortletConfig portletConfig) {
@@ -107,7 +103,7 @@ public class TaskListViewController {
     @RenderMapping()
     public String viewTaskList(ModelMap model, RenderRequest request, RenderResponse response,
             PortletPreferences preferences) {
-        // logger.debug("Creating database structure...");
+        LOGGER.debug("Creating database structure...");
 
         ResourceBundle bundle = portletConfig.getResourceBundle(response.getLocale());
 
@@ -126,7 +122,7 @@ public class TaskListViewController {
                 } else {
                     objectError = new ObjectError("DataAccessError", ERROR_WHEN_ACCESSING_DATA_SOURCE);
                 }
-                // logger.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
+                LOGGER.error("Error when trying to fetch tasks for user " + userId + ".", dataAccessException);
                 model.addAttribute("errors", objectError);
             }
         } else {
@@ -261,9 +257,11 @@ public class TaskListViewController {
         try {
             dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
         } catch (ParseException e) {
-            logger.warn("Invalid due date.");
+            LOGGER.warn("Invalid due date.");
         }
-        task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+        if (dueDateObj != null) {
+            task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
+        }
         if (status != null) {
             task.setStatus(Status.valueOf(status));
         } else {
