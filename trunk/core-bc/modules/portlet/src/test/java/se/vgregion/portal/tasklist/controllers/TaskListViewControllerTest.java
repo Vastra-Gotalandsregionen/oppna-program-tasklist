@@ -21,8 +21,10 @@
 package se.vgregion.portal.tasklist.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,8 +38,12 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.portlet.ReadOnlyException;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.mock.web.portlet.MockPortletConfig;
@@ -84,8 +90,6 @@ public class TaskListViewControllerTest {
         mockPortletConfig.setResourceBundle(new Locale("sv"), new ResourceBundleMock());
 
         taskListViewController = new TaskListViewController();
-        logger = new LoggerMock();
-        taskListViewController.setLogger(logger);
         taskListViewController.setTaskListService(new TaskListViewControllerTest.MockTaskListService());
         taskListViewController.setPortletConfig(mockPortletConfig);
         mockModelMap = new ModelMap();
@@ -124,15 +128,15 @@ public class TaskListViewControllerTest {
     }
 
     @Test
-    @Ignore
     public void getGetTaskListDataAccessException() {
+        StringWriter logWriter = getLoggerView(Level.ERROR);
         prepareTaskViewListControllerForDataAccessExceptionThrowing();
         String viewTaskListReturnPageName = taskListViewController.viewTaskList(mockModelMap, mockPortletRequest,
                 mockPortletResponse, mockPortletPreferences);
         ObjectError objectError = (ObjectError) mockModelMap.get("errors");
         assertEquals(ERROR_DATA_ACCESS_ERROR_VALUE, objectError.getDefaultMessage());
         assertEquals(TaskListViewController.VIEW_TASKS, viewTaskListReturnPageName);
-        assertEquals("Error when trying to fetch tasks for user " + USER_ID + ".", logger.getMessage());
+        assertTrue(logWriter.toString().contains("Error when trying to fetch tasks for user " + USER_ID + "."));
     }
 
     @Test
@@ -240,6 +244,15 @@ public class TaskListViewControllerTest {
         userInfo.put(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString(), USER_ID);
         mockRenderRequest.setAttribute(PortletRequest.USER_INFO, userInfo);
         return mockRenderRequest;
+    }
+
+    private StringWriter getLoggerView(Level logLevel) {
+        Logger logger = Logger.getLogger(TaskListViewController.class);
+        logger.setLevel(logLevel);
+        final StringWriter writer = new StringWriter();
+        Appender appender = new WriterAppender(new SimpleLayout(), writer);
+        logger.addAppender(appender);
+        return writer;
     }
 
     static class ResourceBundleMock extends ListResourceBundle {
