@@ -14,6 +14,9 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+  <!-- Enables annotations -->
+  <context:annotation-config />  
+
   <bean id="taskListService" class="se.vgregion.portal.tasklist.services.TaskListServiceImpl">
     <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate" />
     <property name="dataFieldMaxValueIncrementer" ref="dataFieldMaxValueIncrementer" />
@@ -23,9 +26,6 @@
     <property name="dataSource" ref="dataSource" />
     <property name="incrementerName" value="task_sequence" />
   </bean>
-
-  <!-- Enables annotations -->
-  <context:annotation-config />  
 
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="location" value="classpath:se/vgregion/portal/tasklist/datasource.properties" />
