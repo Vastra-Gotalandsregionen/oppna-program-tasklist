@@ -255,7 +255,9 @@ public class TaskListViewController {
         task.setUserId(userId);
         Date dueDateObj = null;
         try {
-            dueDateObj = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+            SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy-MM-dd");
+            simpleDateformat.setLenient(false);
+            dueDateObj =simpleDateformat.parse(dueDate);
         } catch (ParseException e) {
             LOGGER.warn("Invalid due date.");
         }

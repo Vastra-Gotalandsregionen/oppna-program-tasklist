@@ -21,6 +21,7 @@
 package se.vgregion.portal.tasklist.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -173,12 +174,28 @@ public class TaskListViewControllerTest {
         Task taskShatShouldHaveBeenUpdated = getTestTaskShatShouldHaveBeenUpdated("1", description, dueDate);
         assertEquals(taskShatShouldHaveBeenUpdated, mockTaskListService.getTaskList(USER_ID).get(0));
     }
+    
+    @Test 
+    public void testParseExceptionHandling() throws IOException {
+        StringWriter loggerView = getLoggerView(Level.WARN);
+        String description = "add description";
+        String priority = "LOW";
+        String statusAdd = null;
+        String dueDate = "12-12-2009";
+        taskListViewController.handleRequest(mockResourceRequest, mockResourceResponse, "", description, priority,
+                dueDate, statusAdd);
+        assertTrue(loggerView.toString().contains("Invalid due date."));
+        assertFalse(mockResourceResponse.getContentAsString().contains("checked='true'"));
+
+    }
 
     @Test
     public void testDeleteTask() throws NumberFormatException, IOException {
         taskListViewController.deleteTask(mockResourceRequest, mockResourceResponse, Long.parseLong("1"));
         assertEquals("text/xml", mockResourceResponse.getContentType());
     }
+    
+
 
     /**
      * @param description
