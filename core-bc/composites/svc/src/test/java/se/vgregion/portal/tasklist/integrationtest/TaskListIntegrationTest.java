@@ -45,7 +45,7 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  * @author david bennehult
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:**/applicationContext.xml",
+@ContextConfiguration(locations = { "classpath:applicationContext.xml",
         "classpath:**/testApplicationContext.xml" })
 public class TaskListIntegrationTest {
 
