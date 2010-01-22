@@ -128,6 +128,11 @@ public class TaskListViewController {
         } else {
             taskList = new ArrayList<Task>();
         }
+        
+        // Set number of tasks in TaskList portlet header.
+        if (bundle != null) {
+            response.setTitle(bundle.getString("javax.portlet.title") + " (" + taskList.size() + ")");
+        }
         model.addAttribute("taskList", taskList);
         return VIEW_TASKS;
     }
@@ -257,7 +262,7 @@ public class TaskListViewController {
         try {
             SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy-MM-dd");
             simpleDateformat.setLenient(false);
-            dueDateObj =simpleDateformat.parse(dueDate);
+            dueDateObj = simpleDateformat.parse(dueDate);
         } catch (ParseException e) {
             LOGGER.warn("Invalid due date.");
         }
