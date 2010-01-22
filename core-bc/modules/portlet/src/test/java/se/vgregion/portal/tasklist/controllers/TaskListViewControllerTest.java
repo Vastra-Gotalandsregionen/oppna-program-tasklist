@@ -68,8 +68,9 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  */
 public class TaskListViewControllerTest {
 
-    public static final String ERROR_DATA_ACCESS_ERROR_VALUE = "Kunde ej få kontakt med databasen. Var god försök senare.";
-    public static final String ERROR_DATA_ACCESS_ERROR = "error.DataAccessError";
+    private static final String DATA_ACCESS_ERROR_KEY = "error.DataAccessError";
+    private static final String DATA_ACCESS_ERROR_VALUE = "Kunde ej få kontakt med databasen. Var god försök senare.";
+    
     private static final String USER_ID = String.valueOf(1);
 
     private TaskListViewController taskListViewController;
@@ -81,6 +82,8 @@ public class TaskListViewControllerTest {
     private MockResourceRequest mockResourceRequest;
     private MockResourceResponse mockResourceResponse;
     private MockPortletPreferences mockPortletPreferences;
+    private static final String JAVAX_PORTLET_TITLE_KEY = "javax.portlet.title";
+    private static final String TITLE_VALUE = "Tasklist ";
 
     /**
      * @throws java.lang.Exception
@@ -135,7 +138,7 @@ public class TaskListViewControllerTest {
         String viewTaskListReturnPageName = taskListViewController.viewTaskList(mockModelMap, mockPortletRequest,
                 mockPortletResponse, mockPortletPreferences);
         ObjectError objectError = (ObjectError) mockModelMap.get("errors");
-        assertEquals(ERROR_DATA_ACCESS_ERROR_VALUE, objectError.getDefaultMessage());
+        assertEquals(DATA_ACCESS_ERROR_VALUE, objectError.getDefaultMessage());
         assertEquals(TaskListViewController.VIEW_TASKS, viewTaskListReturnPageName);
         assertTrue(logWriter.toString().contains("Error when trying to fetch tasks for user " + USER_ID + "."));
     }
@@ -271,14 +274,19 @@ public class TaskListViewControllerTest {
         logger.addAppender(appender);
         return writer;
     }
+    
+    class ResourceBundleMock extends ListResourceBundle {
 
-    static class ResourceBundleMock extends ListResourceBundle {
-        private Object[][] contents = new Object[][] { { ERROR_DATA_ACCESS_ERROR, ERROR_DATA_ACCESS_ERROR_VALUE } };
+        private Object[][] contents = new Object[][] {
 
-        @Override
+        { JAVAX_PORTLET_TITLE_KEY, TITLE_VALUE },{DATA_ACCESS_ERROR_KEY, DATA_ACCESS_ERROR_VALUE} };
+
         protected Object[][] getContents() {
+
             return contents;
+
         }
+
     }
 
     static class MockTaskListService implements TaskListService {
