@@ -115,6 +115,10 @@ public class TaskListViewController {
         if (!"".equals(userId)) {
             try {
                 taskList = taskListService.getTaskList(userId);
+                // Set number of tasks in TaskList portlet header.
+                if (bundle != null) {
+                    response.setTitle(bundle.getString("javax.portlet.title") + " (" + taskList.size() + ")");
+                }
             } catch (DataAccessException dataAccessException) {
                 ObjectError objectError;
                 if (bundle != null) {
@@ -129,10 +133,6 @@ public class TaskListViewController {
             taskList = new ArrayList<Task>();
         }
         
-        // Set number of tasks in TaskList portlet header.
-        if (bundle != null) {
-            response.setTitle(bundle.getString("javax.portlet.title") + " (" + taskList.size() + ")");
-        }
         model.addAttribute("taskList", taskList);
         return VIEW_TASKS;
     }
