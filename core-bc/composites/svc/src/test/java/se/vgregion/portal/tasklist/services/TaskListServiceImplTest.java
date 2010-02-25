@@ -1,5 +1,5 @@
 /**
- * Copyright 2009 Västra Götalandsregionen
+ * Copyright 2010 Västra Götalandsregionen
  *
  *   This library is free software; you can redistribute it and/or modify
  *   it under the terms of version 2.1 of the GNU Lesser General Public
@@ -14,16 +14,15 @@
  *   License along with this library; if not, write to the
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
+ *
  */
+
 /**
  * 
  */
 package se.vgregion.portal.tasklist.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -73,7 +72,7 @@ public class TaskListServiceImplTest {
     public void testGetTaskList() {
         List<Task> taskList = taskListServiceImpl.getTaskList(userId);
         assertEquals(
-                "SELECT task_id, user_id, description, due_date, priority, status FROM task WHERE user_id = ?",
+                "SELECT task_id, user_id, description, due_date, priority, status FROM vgr_task WHERE user_id = ?",
                 mockSimpleJdbcTemplate.sql);
         assertTrue(mockSimpleJdbcTemplate.rowMapper instanceof TaskRowMapper);
         assertEquals("1", mockSimpleJdbcTemplate.queryParameters[0]);
@@ -94,7 +93,7 @@ public class TaskListServiceImplTest {
         boolean isTaskAdded = taskListServiceImpl.addTask(task);
         assertTrue(isTaskAdded);
         assertEquals(mockSimpleJdbcTemplate.sql,
-                "INSERT INTO task (task_id, user_id, description, due_date, priority, status) values (?, ?, ?, ?, ?, ?)");
+                "INSERT INTO vgr_task (task_id, user_id, description, due_date, priority, status) values (?, ?, ?, ?, ?, ?)");
         assertEquals(mockSimpleJdbcTemplate.args[0], mockDataFieldMaxValueIncrementer.counter - 1);
         assertEquals(mockSimpleJdbcTemplate.args[1], task.getUserId());
         assertEquals(mockSimpleJdbcTemplate.args[2], task.getDescription());
@@ -122,7 +121,7 @@ public class TaskListServiceImplTest {
         mockSimpleJdbcTemplate.affectedRows = 1;
         boolean isTaskUpdated = taskListServiceImpl.updateTask(task);
         assertEquals(
-                "UPDATE task SET user_id = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE task_id = ?",
+                "UPDATE vgr_task SET user_id = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE task_id = ?",
                 mockSimpleJdbcTemplate.sql);
         assertEquals(task.getUserId(), mockSimpleJdbcTemplate.args[0]);
         assertEquals(task.getDescription(), mockSimpleJdbcTemplate.args[1]);
@@ -146,7 +145,7 @@ public class TaskListServiceImplTest {
         long taskId = 0;
         mockSimpleJdbcTemplate.affectedRows = 1;
         boolean isTaskDeleted = taskListServiceImpl.deleteTask(taskId);
-        assertEquals("DELETE FROM task WHERE task_id = ?", mockSimpleJdbcTemplate.sql);
+        assertEquals("DELETE FROM vgr_task WHERE task_id = ?", mockSimpleJdbcTemplate.sql);
         assertEquals(taskId, mockSimpleJdbcTemplate.args[0]);
         assertTrue(isTaskDeleted);
         mockSimpleJdbcTemplate.affectedRows = 0;
