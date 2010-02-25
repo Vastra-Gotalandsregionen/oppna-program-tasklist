@@ -1,5 +1,5 @@
 /**
- * Copyright 2009 Västra Götalandsregionen
+ * Copyright 2010 Västra Götalandsregionen
  *
  *   This library is free software; you can redistribute it and/or modify
  *   it under the terms of version 2.1 of the GNU Lesser General Public
@@ -14,7 +14,9 @@
  *   License along with this library; if not, write to the
  *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *   Boston, MA 02111-1307  USA
+ *
  */
+
 package se.vgregion.portal.tasklist.services;
 
 import java.util.List;
@@ -32,12 +34,12 @@ import se.vgregion.portal.tasklist.domain.Task;
  * 
  */
 public class TaskListServiceImpl implements TaskListService {
-    private static final String SQL_INSERT_TASK = "INSERT INTO task "
+    private static final String SQL_INSERT_TASK = "INSERT INTO vgr_task "
             + "(task_id, user_id, description, due_date, priority, status) values (?, ?, ?, ?, ?, ?)";
     private static final String SQL_GET_TASK = "SELECT task_id, user_id, description, due_date, priority, status "
-            + "FROM task WHERE user_id = ?";
-    private static final String SQL_DELETE_TASK = "DELETE FROM task WHERE task_id = ?";
-    private static final String SQL_UPDATE_TASK = "UPDATE task SET "
+            + "FROM vgr_task WHERE user_id = ?";
+    private static final String SQL_DELETE_TASK = "DELETE FROM vgr_task WHERE task_id = ?";
+    private static final String SQL_UPDATE_TASK = "UPDATE vgr_task SET "
             + "user_id = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE task_id = ?";
     private SimpleJdbcTemplate simpleJdbcTemplate = null;
     private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer = null;
