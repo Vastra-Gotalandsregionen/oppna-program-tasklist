@@ -28,11 +28,14 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
 import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Status;
@@ -50,6 +53,14 @@ public class TaskListIntegrationTest {
     private static final String USER_ID = "user1";
     @Autowired
     TaskListService taskListService;
+
+    @Autowired
+    SimpleJdbcTemplate simpleJdbcTemplate;
+
+    @After
+    public void cleanTable() {
+        SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "vgr_task");
+    }
 
     @Test
     public void testAddAndGetTask() throws ParseException {
