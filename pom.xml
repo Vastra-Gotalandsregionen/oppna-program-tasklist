@@ -20,13 +20,6 @@
   <modules>
     <module>core-bc</module>
   </modules>
-  <build>
-    <testResources>
-      <testResource>
-        <directory>src/main/resources</directory>
-      </testResource>
-    </testResources>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
