@@ -44,5 +44,5 @@
     <property name="schemaLocation" value="classpath:dbsetup/schema.sql" />
     <property name="testDataLocation" value="classpath:dbsetup/test-data.sql" />
   </bean>
-
+  
 </beans>

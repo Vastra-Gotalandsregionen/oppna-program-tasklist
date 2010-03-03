@@ -18,8 +18,9 @@
 --
 
 DROP TABLE task if exists;
+DROP SEQUENCE task_sequence if EXISTS;
 
-CREATE TABLE task
+CREATE TABLE vgr_task
 (
   task_id BIGINT NOT NULL, 
   user_id varchar(10) NOT NULL, 
@@ -29,3 +30,6 @@ CREATE TABLE task
   status varchar(15), 
   CONSTRAINT task_id_pk PRIMARY KEY (task_id)
 );
+
+CREATE SEQUENCE task_sequence;
+
