@@ -19,8 +19,7 @@
 
 package se.vgregion.portal.tasklist.integrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.Date;
 import java.text.DateFormat;
@@ -29,11 +28,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -46,29 +43,13 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  * @author jonas liljenfeldt
  * @author david bennehult
  */
+@ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml",
-        "classpath:**/testApplicationContext.xml" })
 public class TaskListIntegrationTest {
 
     private static final String USER_ID = "user1";
     @Autowired
     TaskListService taskListService;
-    @Autowired
-    SimpleJdbcTemplate simpleJdbcTemplate;
-
-    @Before
-    public void setUp() {
-        simpleJdbcTemplate.getJdbcOperations().execute("DROP TABLE task IF EXISTS");
-        simpleJdbcTemplate.getJdbcOperations().execute("DROP SEQUENCE task_sequence IF EXISTS");
-        simpleJdbcTemplate
-                .getJdbcOperations()
-                .execute(
-                        "CREATE TABLE task (task_id BIGINT NOT NULL, user_id varchar(10) NOT NULL, "
-                                + "description varchar(200) NOT NULL, due_date DATE, priority varchar(15), status varchar(15), "
-                                + "CONSTRAINT task_id_pk PRIMARY KEY (task_id))");
-        simpleJdbcTemplate.getJdbcOperations().execute("CREATE SEQUENCE task_sequence");
-    }
 
     @Test
     public void testAddAndGetTask() throws ParseException {
