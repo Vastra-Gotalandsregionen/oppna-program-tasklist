@@ -31,14 +31,11 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Status;
@@ -50,10 +47,7 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  * @author david bennehult
  */
 @ContextConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(defaultRollback=true,transactionManager="txMgr")
-@Transactional
-public class TaskListIntegrationTest {
+public class TaskListIntegrationTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     private static final String USER_ID = "user1";
     @Autowired
