@@ -19,7 +19,8 @@
 
 package se.vgregion.portal.tasklist.integrationtest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Date;
 import java.text.DateFormat;
@@ -35,7 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.vgregion.portal.tasklist.domain.Priority;
 import se.vgregion.portal.tasklist.domain.Status;
@@ -48,6 +51,8 @@ import se.vgregion.portal.tasklist.services.TaskListService;
  */
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
+@TransactionConfiguration(defaultRollback=true,transactionManager="txMgr")
+@Transactional
 public class TaskListIntegrationTest {
 
     private static final String USER_ID = "user1";
@@ -128,7 +133,6 @@ public class TaskListIntegrationTest {
 
     private Date createSqlDate(String dateString) throws ParseException {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
         java.util.Date parseDate = formatter.parse(dateString);
         return new Date(parseDate.getTime());
     }
