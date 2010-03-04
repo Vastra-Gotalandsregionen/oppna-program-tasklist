@@ -96,7 +96,7 @@ public class TaskTest {
     public void testNotEqualsObject() {
         assertFalse(task1.equals(task3));
         assertFalse(task1.equals(null));
-        assertFalse(task1.equals(new String()));
+        assertFalse(task1.equals(""));
     }
 
     private int generateHashCode(Task task) {
