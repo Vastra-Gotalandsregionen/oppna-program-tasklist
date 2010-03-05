@@ -30,8 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -50,15 +53,18 @@ import se.vgregion.portal.tasklist.services.TaskListService;
 public class TaskListIntegrationTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     private static final String USER_ID = "user1";
+    
     @Autowired
-    TaskListService taskListService;
+    private TaskListService taskListService;
 
     @Autowired
-    SimpleJdbcTemplate simpleJdbcTemplate;
+    private SimpleJdbcTemplate simpleJdbcTemplate;
 
-    @After
-    public void cleanTable() {
-        SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "vgr_task");
+    private Resource sqlSchema = new ClassPathResource("dbsetup/tasklist_schema.sql");
+    
+    @Before
+    public void cleanDatabase() {
+        SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, sqlSchema, true);
     }
 
     @Test
