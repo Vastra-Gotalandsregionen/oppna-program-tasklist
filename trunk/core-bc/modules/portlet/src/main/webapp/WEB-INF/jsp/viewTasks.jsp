@@ -271,11 +271,11 @@
     &#160;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" alt="Prioritet: ${task.priority}"/> <br />
      <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''}>
       <span>
-      <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" /></a>
-      <a onclick="deleteTask('${task.taskId}');" href="#"><img src="/vgr-theme/i/icons/delete.png" /></a> 
+      <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" alt="Ändra uppgift"/></a>
+      <a onclick="deleteTask('${task.taskId}');" href="#"><img src="/vgr-theme/i/icons/delete.png" alt="Ta bort uppgift"/></a> 
       &#160;&#160;${task.dueDate}
       </span>
-      </div>
+     </div>
     </li>
   </c:forEach>
 </ul>
