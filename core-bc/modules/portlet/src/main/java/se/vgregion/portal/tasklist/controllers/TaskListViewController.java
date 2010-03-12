@@ -92,14 +92,10 @@ public class TaskListViewController {
     /**
      * Shows active tasks for user.
      * 
-     * @param model
-     *            ModelMap
-     * @param request
-     *            RenderRequest
-     * @param response
-     *            RenderResponse
-     * @param preferences
-     *            PortletPreferences
+     * @param model ModelMap
+     * @param request RenderRequest
+     * @param response RenderResponse
+     * @param preferences PortletPreferences
      * @return View name.
      */
     @RenderMapping()
@@ -134,7 +130,7 @@ public class TaskListViewController {
         } else {
             taskList = new ArrayList<Task>();
         }
-        
+
         model.addAttribute("taskList", taskList);
         return VIEW_TASKS;
     }
@@ -150,27 +146,21 @@ public class TaskListViewController {
     /**
      * Insert or update task.
      * 
-     * @param request
-     *            ResourceRequest
-     * @param response
-     *            ResourceResponse
-     * @param taskId
-     *            If empty, task will be added. Updated otherwise.
-     * @param description
-     *            Task description.
-     * @param priority
-     *            Task priority.
-     * @param dueDate
-     *            Task due date.
-     * @param status
-     *            Task status.
-     * @throws IOException
-     *             Thrown if IO exception.
+     * @param request ResourceRequest
+     * @param response ResourceResponse
+     * @param taskId If empty, task will be added. Updated otherwise.
+     * @param description Task description.
+     * @param priority Task priority.
+     * @param dueDate Task due date.
+     * @param status Task status.
+     * @throws IOException Thrown if IO exception.
      */
     @ResourceMapping("save")
-    public void handleRequest(ResourceRequest request, ResourceResponse response, @RequestParam String taskId,
-            @RequestParam String description, @RequestParam String priority, @RequestParam String dueDate,
-            @RequestParam(required = false) String status) throws IOException {
+    public void handleRequest(ResourceRequest request, ResourceResponse response,
+            @RequestParam(value = "taskId") String taskId,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "priority") String priority, @RequestParam(value = "dueDate") String dueDate,
+            @RequestParam(value = "status", required = false) String status) throws IOException {
         @SuppressWarnings("unchecked")
         Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
         String userId = getUserId(attributes);
@@ -190,18 +180,14 @@ public class TaskListViewController {
     /**
      * Delete specified task.
      * 
-     * @param request
-     *            ResourceRequest
-     * @param response
-     *            ResourceResponse
-     * @param taskId
-     *            If empty, task will be added. Updated otherwise.
-     * @throws IOException
-     *             Thrown if IO exception.
+     * @param request ResourceRequest
+     * @param response ResourceResponse
+     * @param taskId If empty, task will be added. Updated otherwise.
+     * @throws IOException Thrown if IO exception.
      */
     @ResourceMapping("delete")
-    public void deleteTask(ResourceRequest request, ResourceResponse response, @RequestParam long taskId)
-            throws IOException {
+    public void deleteTask(ResourceRequest request, ResourceResponse response,
+            @RequestParam(value = "taskId") long taskId) throws IOException {
         taskListService.deleteTask(taskId);
         @SuppressWarnings("unchecked")
         Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
