@@ -67,7 +67,7 @@ form#taskForm input, form#taskForm select {
 }
 
 .editTask {
-	float: left;
+/*	float: left;*/
 }
 
 .descriptionLabel {

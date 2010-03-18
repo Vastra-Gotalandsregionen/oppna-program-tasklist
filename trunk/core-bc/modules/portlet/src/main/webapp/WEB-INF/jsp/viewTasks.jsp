@@ -304,11 +304,11 @@
   </tr>
   <tr>
     <td><label for="priority">Prioritet:</label></td>
-    <td><SELECT id="priority">
-      <OPTION VALUE="LOW">Låg
-      <OPTION VALUE="MEDIUM">Medium
-      <OPTION VALUE="HIGH">Hög
-    </SELECT></td>
+    <td><select id="priority">
+      <option value="LOW">Låg</option>
+      <option value="MEDIUM" selected="selected">Medium</option>
+      <option value="HIGH">Hög</option>
+    </select></td>
   </tr>
   <tr>
     <td><input type="button" onclick="updateTask();" value="Spara" /></td>
