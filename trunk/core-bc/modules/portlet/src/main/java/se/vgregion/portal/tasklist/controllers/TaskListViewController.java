@@ -36,6 +36,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,10 +93,14 @@ public class TaskListViewController {
     /**
      * Shows active tasks for user.
      * 
-     * @param model ModelMap
-     * @param request RenderRequest
-     * @param response RenderResponse
-     * @param preferences PortletPreferences
+     * @param model
+     *            ModelMap
+     * @param request
+     *            RenderRequest
+     * @param response
+     *            RenderResponse
+     * @param preferences
+     *            PortletPreferences
      * @return View name.
      */
     @RenderMapping()
@@ -146,14 +151,22 @@ public class TaskListViewController {
     /**
      * Insert or update task.
      * 
-     * @param request ResourceRequest
-     * @param response ResourceResponse
-     * @param taskId If empty, task will be added. Updated otherwise.
-     * @param description Task description.
-     * @param priority Task priority.
-     * @param dueDate Task due date.
-     * @param status Task status.
-     * @throws IOException Thrown if IO exception.
+     * @param request
+     *            ResourceRequest
+     * @param response
+     *            ResourceResponse
+     * @param taskId
+     *            If empty, task will be added. Updated otherwise.
+     * @param description
+     *            Task description.
+     * @param priority
+     *            Task priority.
+     * @param dueDate
+     *            Task due date.
+     * @param status
+     *            Task status.
+     * @throws IOException
+     *             Thrown if IO exception.
      */
     @ResourceMapping("save")
     public void handleRequest(ResourceRequest request, ResourceResponse response,
@@ -164,6 +177,9 @@ public class TaskListViewController {
         @SuppressWarnings("unchecked")
         Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
         String userId = getUserId(attributes);
+        if (StringUtils.isBlank(priority)) {
+            priority = Priority.MEDIUM.toString();
+        }
 
         Task task = createTaskFromParams(taskId, description, priority, userId, dueDate, status);
         if ("".equals(taskId)) {
@@ -180,10 +196,14 @@ public class TaskListViewController {
     /**
      * Delete specified task.
      * 
-     * @param request ResourceRequest
-     * @param response ResourceResponse
-     * @param taskId If empty, task will be added. Updated otherwise.
-     * @throws IOException Thrown if IO exception.
+     * @param request
+     *            ResourceRequest
+     * @param response
+     *            ResourceResponse
+     * @param taskId
+     *            If empty, task will be added. Updated otherwise.
+     * @throws IOException
+     *             Thrown if IO exception.
      */
     @ResourceMapping("delete")
     public void deleteTask(ResourceRequest request, ResourceResponse response,
