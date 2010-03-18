@@ -9,7 +9,7 @@
   <groupId>se.vgregion.tasklist</groupId>
   <artifactId>tasklist-system</artifactId>
   <packaging>pom</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <name>${project.artifactId}</name>
   
   <parent>
