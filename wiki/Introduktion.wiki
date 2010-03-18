@@ -13,4 +13,6 @@ Portleten är utformad enligt JSR-168/286 med hjälp av Spring Portlet MVC. AJAX
 
 För att lagra uppgifterna används en relationsdatabas. Denna är inte inbäddad i applikationen utan förutsätts finnas tillgänglig i nätverket. Databasanslutningsuppgifterna anges i filen [http://code.google.com/p/oppna-program-tasklist/source/browse/trunk/core-bc/modules/portlet/src/main/resources/se/vgregion/portal/tasklist/datasource.properties datasource.properties] samt i security.properties. För att se exempel på hur security.properties ska se ut kan med fördel [http://code.google.com/p/oppna-program-tasklist/source/browse/trunk/core-bc/modules/portlet/src/main/resources/se/vgregion/portal/tasklist/security.properties.template security.properties.template] studeras.
 
+== Databas ==
+
 Databastabellen som används heter _vgr_task_ och skapas genom att man kör [http://code.google.com/p/oppna-program-tasklist/source/browse/trunk/core-bc/sql/generate_task_table.sql sql-skriptet].
