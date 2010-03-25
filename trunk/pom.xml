@@ -9,7 +9,7 @@
   <groupId>se.vgregion.tasklist</groupId>
   <artifactId>tasklist-system</artifactId>
   <packaging>pom</packaging>
-  <version>1.4</version>
+  <version>1.5-SNAPSHOT</version>
   <name>${project.artifactId}</name>
   
   <parent>
@@ -44,8 +44,8 @@
   </repositories>
   
   <scm>
-    <developerConnection>scm:svn:https://oppna-program-tasklist.googlecode.com/svn/tags/tasklist-system-1.4</developerConnection>
-    <url>http://oppna-program-tasklist.googlecode.com/svn/tags/tasklist-system-1.4</url>
+    <developerConnection>scm:svn:https://oppna-program-tasklist.googlecode.com/svn/trunk</developerConnection>
+    <url>http://oppna-program-tasklist.googlecode.com/svn/trunk</url>
   </scm>
 
 </project>
