@@ -78,6 +78,21 @@
         if(document.getElementById('dueDate').value==""){
             alert("Datum saknas!");
             ok=false;
+        } else {
+            var dateString = document.getElementById('dueDate').value;
+            var dateParts = dateString.split('-');
+            if (dateParts.length < 3) {
+                ok = false;
+            } else {
+                var dt = new Date(dateParts[0], dateParts[1], dateParts[2]);
+                if (dt == 'NaN' || dt == 'Invalid Date') {
+                    ok = false;
+                }
+            }
+            if (!ok) {
+                alert(dateString + " är inte ett giltigt datum! Förväntat format: YYYY-MM-DD");
+                document.getElementById('dueDate').focus();
+            }
         }
         if(! ok) return;
 
@@ -119,14 +134,14 @@
     }
 
   var handleSuccess = function(o) { 
-    if(o.responseText !== undefined){
+    if(o.responseText != undefined){
      document.getElementById('taskList').innerHTML = o.responseText;
     } 
     myOverlay.hide();
   }; 
 
   var handleFailure = function(o) { 
-     if(o.responseText !== undefined){ 
+     if(o.responseText != undefined){ 
        alert("update failure!");
      } 
      myOverlay.hide();
@@ -261,27 +276,25 @@
 	//--></script>
 
 <div class="yui-skin-sam">
-
 <div id="taskList">
 <ul class="list tasks">
   <c:forEach items="${taskList}" var="task">
-    <li ${task.status== 'CLOSED' ? 'class="done"' : ''}><input type="checkbox" class="todo"
-      onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);"
-      ${task.status== 'CLOSED' ? 'checked="true" ' : ''} "/> <label class="descriptionLabel">
-    &#160;${task.description}</label> <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" alt="Prioritet: ${task.priority}" title="Prioritet: ${task.priority}"/> <br />
+    <li ${task.status== 'CLOSED' ? 'class="done"' : ''}>
+     <input type="checkbox" class="todo" onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);" ${task.status== 'CLOSED' ? 'checked="true"' : ''} />
+     <label class="descriptionLabel">&#160;${task.description}</label>
+     <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif" alt="Prioritet: ${task.priority}" title="Prioritet: ${task.priority}"/>
+     <br />
      <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''}>
       <span>
-      <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" alt="Ändra uppgift" title="Ändra uppgift"/></a>
-      <a onclick="deleteTask('${task.taskId}');" href="#"><img src="/vgr-theme/i/icons/delete.png" alt="Ta bort uppgift" title="Ta bort uppgift"/></a> 
-      &#160;&#160;${task.dueDate}
+        <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');" class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" alt="Ändra uppgift" title="Ändra uppgift"/></a><a onclick="deleteTask('${task.taskId}');" href="#"><img src="/vgr-theme/i/icons/delete.png" alt="Ta bort uppgift" title="Ta bort uppgift"/></a>&#160;${task.dueDate}
       </span>
      </div>
     </li>
   </c:forEach>
 </ul>
 </div>
-  <a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a> 
-<!--<a href="#" id="prepareLink">Lägg till ny uppgift</a> -->
+
+<a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a> 
 
 <div id="myOverlayId" style="visibility:hidden;">
 <fieldset><legend>Lägg till/ändra uppgift</legend>
@@ -297,7 +310,7 @@
     <td><label for="dueDate">Klart datum:<em>*</em></label></td>
     <td>
     <div class="box">
-    <div class="datefield"><input type="text" id="dueDate" name="dueDate" value="" readonly="true" size="10"
+    <div class="datefield"><input type="text" id="dueDate" name="dueDate" value="" size="10"
       class="readOnly" /></div>
     </div>
     </td>

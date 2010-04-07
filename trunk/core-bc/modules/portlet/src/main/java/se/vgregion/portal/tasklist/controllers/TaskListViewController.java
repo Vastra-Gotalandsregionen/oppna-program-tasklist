@@ -242,13 +242,13 @@ public class TaskListViewController {
                 sb.append(" class=\"hidden\"");
             }
             sb.append(">");
-            sb.append("<a onclick=\"deleteTask('" + task.getTaskId() + "');\">");
-            sb.append("<img src=\"/vgr-theme/i/icons/delete.png\" />");
-            sb.append("</a>");
             sb.append("<a onclick=\"prepareEdit('" + task.getTaskId() + "', '" + task.getDescription() + "', '"
                     + task.getPriority() + "', '" + task.getDueDate() + "');\" class=\"editTask\" href=\"#\">");
             sb.append("<img src=\"/vgr-theme/i/icons/pencil.png\" />");
             sb.append("</a>");
+            sb.append("<a onclick=\"deleteTask('" + task.getTaskId() + "');\">");
+            sb.append("<img src=\"/vgr-theme/i/icons/delete.png\" />");
+            sb.append("</a>&#160;");
             sb.append(task.getDueDate());
             sb.append("</div>");
             sb.append("</li>");
@@ -272,11 +272,10 @@ public class TaskListViewController {
             simpleDateformat.setLenient(false);
             dueDateObj = simpleDateformat.parse(dueDate);
         } catch (ParseException e) {
-            LOGGER.warn("Invalid due date.");
+            LOGGER.warn("Invalid due date. Setting today's date.");
+            dueDateObj = new Date();
         }
-        if (dueDateObj != null) {
-            task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
-        }
+        task.setDueDate(new java.sql.Date(dueDateObj.getTime()));
         if (status != null) {
             task.setStatus(Status.valueOf(status));
         } else {
