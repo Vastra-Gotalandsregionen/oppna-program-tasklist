@@ -46,11 +46,6 @@
 	  <id>sonatype-nexus-releases</id>
       <name>Sonatype Nexus Releases</name>
       <url>http://oss.sonatype.org/content/repositories/releases</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-        <enabled>true</enabled>
-      </releases>
 	</repository>
   </repositories>
   
