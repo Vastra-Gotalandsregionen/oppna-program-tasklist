@@ -21,19 +21,6 @@
   <modules>
     <module>core-bc</module>
   </modules>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>sonatype-nexus</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>sonatype-nexus</id>
-      <name>Sonatype Nexus Releases</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
   
   <dependencies>
     <dependency>
@@ -53,5 +40,31 @@
     <developerConnection>scm:svn:https://oppna-program-tasklist.googlecode.com/svn/trunk</developerConnection>
     <url>http://oppna-program-tasklist.googlecode.com/svn/trunk</url>
   </scm>
+  
+  <repositories>
+    <repository>
+	  <id>sonatype-nexus-releases</id>
+      <name>Sonatype Nexus Releases</name>
+      <url>http://oss.sonatype.org/content/repositories/releases</url>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+        <enabled>true</enabled>
+      </releases>
+	</repository>
+  </repositories>
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus</id>
+      <name>Sonatype Nexus Releases</name>
+      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
 
 </project>
