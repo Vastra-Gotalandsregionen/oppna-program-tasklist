@@ -28,6 +28,8 @@
 
 <script type="text/javascript" src="/vgr-theme/javascript/yui/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="/vgr-theme/javascript/yui/container-min.js"></script>
+<script type="text/javascript" src="/vgr-theme/javascript/yui/calendar-min.js"></script>
+<script type="text/javascript" src="/vgr-theme/javascript/yui/utilities.js"></script>
 
 <link type="text/css" rel="stylesheet" href="/vgr-theme/javascript/yui/assets/calendar.css" />
 
@@ -101,6 +103,7 @@
       "&priority=" + document.getElementById('priority').value + 
       "&dueDate=" + document.getElementById('dueDate').value; 
       var sUrl = '${saveResource}';
+      
       var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
     }
 
