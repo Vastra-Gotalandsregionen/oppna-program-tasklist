@@ -11,7 +11,7 @@ Generation time : 2009-11-27 10:13:39 CET
   <parent>
     <groupId>se.vgregion.tasklist</groupId>
     <artifactId>tasklist-core-bc</artifactId>
-    <version>1.6</version>
+    <version>1.6-SNAPSHOT</version>
   </parent>
   <groupId>se.vgregion.tasklist</groupId>
   <artifactId>tasklist-core-bc-composite-types</artifactId>
