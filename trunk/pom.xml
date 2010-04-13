@@ -15,7 +15,7 @@
   <parent>
     <groupId>se.vgregion.common</groupId>
     <artifactId>profile-open</artifactId>
-    <version>2.0</version>
+    <version>2.3</version>
   </parent>
   
   <modules>
@@ -40,26 +40,5 @@
     <developerConnection>scm:svn:https://oppna-program-tasklist.googlecode.com/svn/trunk</developerConnection>
     <url>http://oppna-program-tasklist.googlecode.com/svn/trunk</url>
   </scm>
-  
-  <repositories>
-    <repository>
-	  <id>sonatype-nexus-releases</id>
-      <name>Sonatype Nexus Releases</name>
-      <url>http://oss.sonatype.org/content/repositories/releases</url>
-	</repository>
-  </repositories>
-  
-  <distributionManagement>
-    <snapshotRepository>
-      <id>sonatype-nexus</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>sonatype-nexus</id>
-      <name>Sonatype Nexus Releases</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
 
 </project>
