@@ -22,23 +22,20 @@
     <module>core-bc</module>
   </modules>
   
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.fw.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>${spring.fw.version}</version>
-    </dependency>
-  </dependencies>
-
   <scm>
     <developerConnection>scm:svn:https://oppna-program-tasklist.googlecode.com/svn/trunk</developerConnection>
     <url>http://oppna-program-tasklist.googlecode.com/svn/trunk</url>
   </scm>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>
