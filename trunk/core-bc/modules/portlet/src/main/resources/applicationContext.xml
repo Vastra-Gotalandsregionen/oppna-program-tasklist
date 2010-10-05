@@ -41,8 +41,8 @@
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list>
-        <value>classpath:se/vgregion/portal/tasklist/datasource.properties</value>
-        <value>classpath:se/vgregion/portal/tasklist/security.properties</value>
+        <value>classpath:datasource.properties</value>
+        <value>classpath:security.properties</value>
       </list>
     </property>
   </bean>
