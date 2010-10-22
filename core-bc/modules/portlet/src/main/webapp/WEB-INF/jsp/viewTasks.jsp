@@ -299,7 +299,7 @@
 
 <a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a> 
 
-<div id="myOverlayId" style="visibility:hidden;">
+<div id="myOverlayId" style="visibility:hidden; position:absolute; top:-1000px;">
 <fieldset><legend>Lägg till/ändra uppgift</legend>
 
 <form id="taskForm" name="taskForm">
