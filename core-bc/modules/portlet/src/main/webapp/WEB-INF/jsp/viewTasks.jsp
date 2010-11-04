@@ -26,11 +26,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions'%>
 
-<script type="text/javascript" src="/vgr-theme/javascript/yui/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/container-min.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/calendar-min.js"></script>
-<script type="text/javascript" src="/vgr-theme/javascript/yui/utilities.js"></script>
-
 <link type="text/css" rel="stylesheet" href="/vgr-theme/javascript/yui/assets/calendar.css" />
 
 <style type="text/css">
@@ -42,16 +37,78 @@
 <portlet:resourceURL id="delete" escapeXml="false" var="deleteResource" />
 
 <script type="text/javascript"><!--
+  try{
    function init() {
       // Build overlay1 based on markup, initially hidden, fixed to the center of the viewport, and 200px wide
-      myOverlay = new YAHOO.widget.Overlay("myOverlayId", {
-          context:["taskList","tl","bl", ["beforeShow", "windowResize"]],  
-          visible : false,
-          width : "220px"
+      AUI().use("overlay", "node-base", "dom", function(Y) {
+        try {
+        window.myOverlay =  new Y.Overlay({
+            srcNode: "#myOverlayId",
+            context:["taskList","tl","bl", ["beforeShow", "windowResize"]],  
+            visible : false,
+            width : "220px"
+        });
+        myOverlay.show_old = myOverlay.show;
+        myOverlay.show = function() {
+            YUI().use("overlay", "node-base", "dom", function(Y) {
+                try {
+                    var pos = Y.one('#taskList').getXY();
+                    Y.one('#myOverlayId').setXY([pos[0]+10, pos[1]+15]);
+                } catch(e){alert(e.message);}
+            });
+            this.show_old();
+        };
+        // If the user clicks somewhere outside... close the whole thing.
+        Y.on('mousedown', function(e) {
+            AUI().use("overlay", "node-base", "dom", function(Y) {
+                var myOverlayDiv = Y.one('#myOverlayId');
+                if (!myOverlayDiv.contains(e.target)) {
+                    myOverlay.hide(); 
+                }
+            });
+        }, document);
+        myOverlay.render(document.body);
+        }catch(eee) {
+            alert('Fel vid dialogskapandet ' + eee.message);
+        }
       });
-      myOverlay.render(document.body);
    }
-   YAHOO.util.Event.addListener(window, "load", init);
+   
+   
+   function runWhenDomReady(func) {
+       YUI().use('node-base', function(Y) {
+           try {Y.on("domready", func);} catch(e){alert(e.message);}
+       });
+   }
+   
+   runWhenDomReady(init);
+   
+   function mkAlloyCallendar() {
+       AUI().ready('aui-calendar', function(A) {
+           window.calendar1 = new A.Calendar({
+               trigger: '#dueDate',
+               dateFormat: '%Y-%m-%d',
+               setValue: true,
+               selectMultipleDates: false,
+               on: {
+                   select: function(event) {
+                       var normal = event.date.normal;
+                       var detailed = event.date.detailed;
+                       var formatted = event.date.formatted;
+                   }
+               }
+           })
+           .render();
+           //calendar1.cfg.setProperty("WEEKDAYS_SHORT", ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"]);
+           //calendar1.cfg.setProperty("MONTHS_LONG",    ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"]);
+           setTimeout(function() {
+               calendar1.toggle();
+           }, 1000);
+           A.on('mousedown', function() { A.CalendarManager.hideAll() }, document);        
+       });
+   }
+   
+   mkAlloyCallendar();
 
     function prepareEdit(taskId, description, priority, dueDate) {
       document.getElementById('taskId').value = taskId;
@@ -62,10 +119,8 @@
     	    if (document.taskForm.priority.options[i].value == priority)
     	        document.taskForm.priority.options[i].selected = true;
       }
-    	      
-      //document.getElementById('myOverlay').style.display = 'inline';
       document.getElementById('dueDate').value = dueDate;
-      myOverlay.show();
+      window.myOverlay.show();
     }
 
     function updateTask() {
@@ -104,7 +159,7 @@
       "&dueDate=" + document.getElementById('dueDate').value; 
       var sUrl = '${saveResource}';
       
-      var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+      ajax(sUrl, postData, callback);
     }
 
 	function cleanString(inputString) {
@@ -119,7 +174,7 @@
     function deleteTask(taskId) {
         var postData = "taskId=" + taskId; 
         var sUrl = '${deleteResource}';
-        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+        var request = ajax(sUrl, postData, callback);
     }
 
     function saveTask(taskId, description, priority, dueDate, status) {
@@ -133,16 +188,30 @@
         	  postData += '&status=OPEN';
           }     
           var sUrl = '${saveResource}';
-          var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, callback, postData); 
+          var request = ajax(sUrl, postData, callback);
     }
 
-  var handleSuccess = function(o) { 
+  var handleSuccess = function(id, o) { 
     if(o.responseText != undefined){
-     document.getElementById('taskList').innerHTML = o.responseText;
+      document.getElementById('taskList').innerHTML = o.responseText;
+      YUI().use('node-base', 'dom', function(Y) {
+          try {
+            var items = Y.all('.tasks li');
+            var hits = Y.all('#portlet_TaskList_WAR_tasklistportlet .portlet-topper .portlet-title .portlet-title-text');
+            if (hits.size() > 0) {
+              var heading = hits.item(0);
+              var html = heading.get('innerHTML');
+              html = html.replace(new RegExp('[0-9]+'), items.size() + '');
+              heading.set('innerHTML', html);
+            }
+          }catch(e) {
+              alert('handleSuccess error \n' + e.message + '\n\n');
+          }
+      });
     } 
     myOverlay.hide();
   }; 
-
+  
   var handleFailure = function(o) { 
      if(o.responseText != undefined){ 
        alert("update failure!");
@@ -156,127 +225,35 @@
     argument: ['foo','bar'] 
   };
 
-  YAHOO.util.Event.onDOMReady(function(){
-
-      var Event = YAHOO.util.Event,
-          Dom = YAHOO.util.Dom,
-          dialog,
-          calendar;
-
-      var showBtn = Dom.get("dueDate");
-
-      Event.on(showBtn, "click", function() {
-
-          // Lazy Dialog Creation - Wait to create the Dialog, and setup document click listeners, until the first time the button is clicked.
-          if (!dialog) {
-
-              // Hide Calendar if we click anywhere in the document other than the calendar
-              Event.on(document, "click", function(e) {
-                  var el = Event.getTarget(e);
-                  var dialogEl = dialog.element;
-                  if (el != dialogEl && !Dom.isAncestor(dialogEl, el) && el != showBtn && !Dom.isAncestor(showBtn, el)) {
-                      dialog.hide();
-                  }
-              });
-
-              function resetHandler() {
-                  // Reset the current calendar page to the select date, or 
-                  // to today if nothing is selected.
-                  var selDates = calendar.getSelectedDates();
-                  var resetDate;
-      
-                  if (selDates.length > 0) {
-                      resetDate = selDates[0];
-                  } else {
-                      resetDate = calendar.today;
-                  }
-      
-                  calendar.cfg.setProperty("pagedate", resetDate);
-                  calendar.render();
-              }
-      
-              function closeHandler() {
-                  dialog.hide();
-              }
-
-              dialog = new YAHOO.widget.Dialog("container", {
-                  visible:false,
-                  underlay:"none",
-                  width:'230px',
-                  context:["dueDate", "tr", "br"],
-                  //buttons:[ {text:"Återställ", handler: resetHandler, isDefault:true}, {text:"Stäng", handler: closeHandler}],
-                  draggable:true,
-                  close:true
-              });
-              
-              dialog.setHeader('Välj ett datum');
-              dialog.setBody('<div id="cal"></div>');
-              dialog.render(document.body);
-
-              dialog.showEvent.subscribe(function() {
-                  if (YAHOO.env.ua.ie) {
-                      // Since we're hiding the table using yui-overlay-hidden, we 
-                      // want to let the dialog know that the content size has changed, when
-                      // shown
-                      dialog.fireEvent("changeContent");
-                  }
-              });
-          }
-
-          // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
-          if (!calendar) {
-              calendar = new YAHOO.widget.Calendar("cal", {
-                  iframe:false,          // Turn iframe off, since container has iframe support.
-                  hide_blank_weeks:true  // Enable, to demonstrate how we handle changing height, using changeContent
-                   });
-              calendar.cfg.setProperty("WEEKDAYS_SHORT", ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"]);
-              calendar.cfg.setProperty("MONTHS_LONG",    ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"]);   
-                              
-              calendar.render();
-
-              calendar.selectEvent.subscribe(function() {
-                  if (calendar.getSelectedDates().length > 0) {
-
-                      var selDate = calendar.getSelectedDates()[0];
-
-                      // Pretty Date Output, using Calendar's Locale values: Friday, 8 February 2008
-                      var wStr = calendar.cfg.getProperty("WEEKDAYS_LONG")[selDate.getDay()];
-                      var dStr = selDate.getDate();
-                      var mStr = (selDate.getMonth()+1);
-                      var yStr = selDate.getFullYear();
-						if(dStr<10){
-							dStr="0"+dStr;
-						}
-						if(mStr<10){
-							mStr="0"+mStr;
-						}
-                      Dom.get("dueDate").value = yStr + "-" + mStr + "-" + dStr;
-                      //Dom.get("date").value = wStr + ", " + dStr + " " + mStr + " " + yStr;
-                  } else {
-                      Dom.get("dueDate").value = "";
-                  }
-                  dialog.hide();
-              });
-
-              calendar.renderEvent.subscribe(function() {
-                  // Tell Dialog it's contents have changed, which allows 
-                  // container to redraw the underlay (for IE6/Safari2)
-                  dialog.fireEvent("changeContent");
-              });
-          }
-
-          var seldate = calendar.getSelectedDates();
-
-          if (seldate.length > 0) {
-              // Set the pagedate to show the selected date if it exists
-              calendar.cfg.setProperty("pagedate", seldate[0]);
-              calendar.render();
-          }
-          dialog.show();
-      });
-  });
-
-	//--></script>
+  }catch(whatIsWrong) {
+      alert('whatIsWrong ' + whatIsWrong.message);
+  }
+  
+  /**
+    url = the path to the server resouce to be prosessed.
+    data = the data as a string concatenatet
+    callback = an objcect with two callback functions, success and failure.
+  */
+  function ajax(url, data, callback) {
+      try {
+        YUI().use("io-base", "node-base", "dom", function(Y) {
+            var cfg = {
+                    method: "POST",
+                    data: data
+                };
+            if(!callback) alert('The entire callback was null!');
+            if(callback.success) {
+                Y.on('io:success', callback.success);
+            }
+            Y.on('io:failure', callback.failure);
+            var request = Y.io(url, cfg);
+        });
+      }catch(e){
+          alert('Error in ajax ' + e.message);
+      }
+  }
+	//-->
+</script>
 
 <div class="yui-skin-sam">
 <div id="taskList">
@@ -299,9 +276,8 @@
 
 <a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a> 
 
-<div id="myOverlayId" style="visibility:hidden; position:absolute; top:-1000px;">
-<fieldset><legend>Lägg till/ändra uppgift</legend>
-
+<div id="myOverlayId" style="position:absolute; top:-1000px;">
+<fieldset class="yui3-widget-bd portlet"><legend>Lägg till/ändra uppgift</legend>
 <form id="taskForm" name="taskForm">
 <table id="taskTable">
   <tr>
