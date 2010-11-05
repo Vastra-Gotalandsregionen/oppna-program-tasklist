@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>tasklist-portlet</finalName>
     <plugins>
       <plugin>
         <!-- Configure eclipse plug-in to generate a context root that does not have the version number on it -->
