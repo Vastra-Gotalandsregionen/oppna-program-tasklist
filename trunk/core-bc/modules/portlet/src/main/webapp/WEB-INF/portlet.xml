@@ -38,9 +38,9 @@
     <supported-locale>sv</supported-locale>
     <resource-bundle>se.vgregion.portal.tasklist.taskList</resource-bundle>
     <portlet-info>
-      <title>Att göra</title>
-      <short-title>Att göra</short-title>
-      <keywords>tasklist todo reminders uppgifter att göra</keywords>
+      <title>Att gÃ¶ra</title>
+      <short-title>Att gÃ¶ra</short-title>
+      <keywords>tasklist todo reminders uppgifter att gÃ¶ra</keywords>
     </portlet-info>
   </portlet>
   <default-namespace>http://TaskList/</default-namespace>
