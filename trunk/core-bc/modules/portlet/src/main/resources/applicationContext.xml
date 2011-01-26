@@ -21,43 +21,32 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:context="http://www.springframework.org/schema/context"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-  <!-- Enables annotations -->
-  <context:annotation-config />  
+    <!-- Enables annotations -->
+    <context:annotation-config/>
 
-  <bean id="taskListService" class="se.vgregion.portal.tasklist.services.TaskListServiceImpl">
-    <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate" />
-    <property name="dataFieldMaxValueIncrementer" ref="dataFieldMaxValueIncrementer" />
-  </bean>
+    <bean id="taskListService" class="se.vgregion.portal.tasklist.services.TaskListServiceImpl">
+        <property name="simpleJdbcTemplate" ref="simpleJdbcTemplate"/>
+        <property name="dataFieldMaxValueIncrementer" ref="dataFieldMaxValueIncrementer"/>
+    </bean>
 
-  <bean id="dataFieldMaxValueIncrementer" class="org.springframework.jdbc.support.incrementer.PostgreSQLSequenceMaxValueIncrementer">
-    <property name="dataSource" ref="dataSource" />
-    <property name="incrementerName" value="vgr_task_sequence" />
-  </bean>
+    <bean id="dataFieldMaxValueIncrementer"
+          class="org.springframework.jdbc.support.incrementer.PostgreSQLSequenceMaxValueIncrementer">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="incrementerName" value="vgr_task_sequence"/>
+    </bean>
 
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>classpath:datasource.properties</value>
-        <value>classpath:security.properties</value>
-      </list>
-    </property>
-  </bean>
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/VgrPool"/>
+    </bean>
 
-  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-    <property name="driverClassName" value="${database.driver}" />
-    <property name="url" value="${database.url}" />
-    <property name="username" value="${database.user}" />
-    <property name="password" value="${database.password}" />
-  </bean>
+    <bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
 
-  <bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
-    <constructor-arg ref="dataSource" /> 
-  </bean>
-
-  <bean id="logger" class="se.vgregion.portal.tasklist.services.LoggerInjector" />
+    <bean id="logger" class="se.vgregion.portal.tasklist.services.LoggerInjector"/>
 
 </beans> 
