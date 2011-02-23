@@ -537,8 +537,10 @@ AUI().add('vgr-tasklist',function(A) {
 						var contentBox = instance.get(CONTENT_BOX);
 						var taskList = contentBox.one('ul.tasks');
 						
-						taskList.purge();
-						taskList.remove();
+						if(taskList) {
+							taskList.purge();
+							taskList.remove();
+						}
 						contentBox.prepend(html);
 						
 						instance._bindTaskListComponents();
