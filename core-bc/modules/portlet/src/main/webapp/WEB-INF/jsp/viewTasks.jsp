@@ -26,306 +26,102 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions' %>
 
-<link type="text/css" rel="stylesheet" href="/vgr-theme/javascript/yui/assets/calendar.css"/>
-
-<style type="text/css">
-    <%@ include file="/style/styles.css" %>
-</style>
-
 <portlet:actionURL escapeXml="false" var="formAction"/>
 <portlet:resourceURL id="save" escapeXml="false" var="saveResource"/>
 <portlet:resourceURL id="delete" escapeXml="false" var="deleteResource"/>
 
-<script type="text/javascript"><!--
-try {
-    function init() {
-        // Build overlay1 based on markup, initially hidden, fixed to the center of the viewport, and 200px wide
-        AUI().use("overlay", "node-base", "dom", function(Y) {
-            try {
-                window.myOverlay = new Y.Overlay({
-                    srcNode: "#myOverlayId",
-                    context:["taskList","tl","bl", ["beforeShow", "windowResize"]],
-                    visible : false,
-                    width : "220px"
-                });
-                myOverlay.show_old = myOverlay.show;
-                myOverlay.show = function() {
-                    YUI().use("overlay", "node-base", "dom", function(Y) {
-                        try {
-                            var pos = Y.one('#taskList').getXY();
-                            Y.one('#myOverlayId').setXY([pos[0] + 10, pos[1] + 15]);
-                        } catch(e) {
-                            alert(e.message);
-                        }
-                    });
-                    this.show_old();
-                };
-                // If the user clicks somewhere outside... close the whole thing.
-                Y.on('mousedown', function(e) {
-                    AUI().use("overlay", "node-base", "dom", function(Y) {
-                        var myOverlayDiv = Y.one('#myOverlayId');
-                        if (!myOverlayDiv.contains(e.target)) {
-                            myOverlay.hide();
-                        }
-                    });
-                }, document);
-                myOverlay.render(document.body);
-            } catch(eee) {
-                alert('Fel vid dialogskapandet ' + eee.message);
-            }
-        });
-    }
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/vgr-tasklist.js"></script>
 
-
-    function runWhenDomReady(func) {
-        YUI().use('node-base', function(Y) {
-            try {
-                Y.on("domready", func);
-            } catch(e) {
-                alert(e.message);
-            }
-        });
-    }
-
-    runWhenDomReady(init);
-
-    function mkAlloyCallendar() {
-        AUI().ready('aui-calendar', function(A) {
-            window.calendar1 = new A.Calendar({
-                trigger: '#dueDate',
-                dateFormat: '%Y-%m-%d',
-                setValue: true,
-                selectMultipleDates: false,
-                on: {
-                    select: function(event) {
-                        var normal = event.date.normal;
-                        var detailed = event.date.detailed;
-                        var formatted = event.date.formatted;
-                    }
-                }
-            })
-                    .render();
-            //calendar1.cfg.setProperty("WEEKDAYS_SHORT", ["Sö", "Må", "Ti", "On", "To", "Fr", "Lö"]);
-            //calendar1.cfg.setProperty("MONTHS_LONG",    ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"]);
-            setTimeout(function() {
-                calendar1.toggle();
-            }, 1000);
-            A.on('mousedown', function() {
-                A.CalendarManager.hideAll()
-            }, document);
-        });
-    }
-
-    mkAlloyCallendar();
-
-    function prepareEdit(taskId, description, priority, dueDate) {
-        document.getElementById('taskId').value = taskId;
-        document.getElementById('description').value = description;
-        document.getElementById('priority').value = priority;
-
-        for (var i = 0; i < document.taskForm.priority.options.length; i++) {
-            if (document.taskForm.priority.options[i].value == priority)
-                document.taskForm.priority.options[i].selected = true;
-        }
-        document.getElementById('dueDate').value = dueDate;
-        window.myOverlay.show();
-    }
-
-    function updateTask() {
-        var ok = true;
-
-        // Remove illegal characters
-        document.getElementById('description').value = cleanString(document.getElementById('description').value);
-        if (document.getElementById('description').value == "") {
-            alert("Beskrivning saknas!");
-            ok = false;
-        }
-        if (document.getElementById('dueDate').value == "") {
-            alert("Datum saknas!");
-            ok = false;
-        } else {
-            var dateString = document.getElementById('dueDate').value;
-            var dateParts = dateString.split('-');
-            if (dateParts.length < 3) {
-                ok = false;
-            } else {
-                var dt = new Date(dateParts[0], dateParts[1], dateParts[2]);
-                if (dt == 'NaN' || dt == 'Invalid Date') {
-                    ok = false;
-                }
-            }
-            if (!ok) {
-                alert(dateString + " är inte ett giltigt datum! Förväntat format: YYYY-MM-DD");
-                document.getElementById('dueDate').focus();
-            }
-        }
-        if (! ok) return;
-
-        var postData = "taskId=" + document.getElementById('taskId').value +
-                "&description=" + document.getElementById('description').value +
-                "&priority=" + document.getElementById('priority').value +
-                "&dueDate=" + document.getElementById('dueDate').value;
-        var sUrl = '${saveResource}';
-
-        ajax(sUrl, postData, callback);
-    }
-
-    function cleanString(inputString) {
-        var outputString = inputString.replace("'", "").replace("\"", "");
-        return outputString;
-    }
-
-    function cancel() {
-        myOverlay.hide();
-    }
-
-    function deleteTask(taskId) {
-        var postData = "taskId=" + taskId;
-        var sUrl = '${deleteResource}';
-        var request = ajax(sUrl, postData, callback);
-    }
-
-    function saveTask(taskId, description, priority, dueDate, status) {
-        var postData = "taskId=" + taskId +
-                "&description=" + description +
-                "&priority=" + priority +
-                "&dueDate=" + dueDate;
-        if (status == true) {
-            postData += '&status=CLOSED';
-        } else {
-            postData += '&status=OPEN';
-        }
-        var sUrl = '${saveResource}';
-        var request = ajax(sUrl, postData, callback);
-    }
-
-    var handleSuccess = function(id, o) {
-        if (o.responseText != undefined) {
-            document.getElementById('taskList').innerHTML = o.responseText;
-            YUI().use('node-base', 'dom', function(Y) {
-                try {
-                    var items = Y.all('.tasks li');
-                    var hits = Y.all('#portlet_TaskList_WAR_tasklistportlet .portlet-topper .portlet-title .portlet-title-text');
-                    if (hits.size() > 0) {
-                        var heading = hits.item(0);
-                        var html = heading.get('innerHTML');
-                        html = html.replace(new RegExp('[0-9]+'), items.size() + '');
-                        heading.set('innerHTML', html);
-                    }
-                } catch(e) {
-                    alert('handleSuccess error \n' + e.message + '\n\n');
-                }
-            });
-        }
-        myOverlay.hide();
-    };
-
-    var handleFailure = function(o) {
-        if (o.responseText != undefined) {
-            alert("update failure!");
-        }
-        myOverlay.hide();
-    };
-
-    var callback = {
-        success:handleSuccess,
-        failure: handleFailure,
-        argument: ['foo','bar']
-    };
-
-} catch(whatIsWrong) {
-    alert('whatIsWrong ' + whatIsWrong.message);
-}
-
-/**
- url = the path to the server resouce to be prosessed.
- data = the data as a string concatenatet
- callback = an objcect with two callback functions, success and failure.
- */
-function ajax(url, data, callback) {
-    try {
-        YUI().use("io-base", "node-base", "dom", function(Y) {
-            var cfg = {
-                method: "POST",
-                data: data
-            };
-            if (!callback) alert('The entire callback was null!');
-            if (callback.success) {
-                Y.on('io:success', callback.success);
-            }
-            Y.on('io:failure', callback.failure);
-            var request = Y.io(url, cfg);
-        });
-    } catch(e) {
-        alert('Error in ajax ' + e.message);
-    }
-}
-//-->
-</script>
-
-<div class="yui-skin-sam">
-    <div id="taskList">
-        <ul class="list tasks">
-            <c:forEach items="${taskList}" var="task">
-                <li ${task.status== 'CLOSED' ? 'class="done"' : ''}>
-                    <input type="checkbox" class="todo"
-                           onclick="saveTask('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}' , this.checked);" ${task.status== 'CLOSED' ? 'checked="true"' : ''} />
-                    <label class="descriptionLabel">&#160;${task.description}</label>
-                    <img class="prioImage" src="/vgr-theme/i/prio-${task.priority}.gif"
-                         alt="Prioritet: ${task.priority}" title="Prioritet: ${task.priority}"/>
-                    <br/>
-
-                    <div ${task.status== 'CLOSED' ? 'class="hidden"' : ''}>
-      <span>
-        <a onclick="prepareEdit('${task.taskId}', '${task.description}', '${task.priority}', '${task.dueDate}');"
-           class="editTask" href="#"><img src="/vgr-theme/i/icons/pencil.png" alt="Ändra uppgift"
-                                          title="Ändra uppgift"/></a><a onclick="deleteTask('${task.taskId}');"
-                                                                        href="#"><img
-              src="/vgr-theme/i/icons/delete.png" alt="Ta bort uppgift"
-              title="Ta bort uppgift"/></a>&#160;${task.dueDate}
-      </span>
-                    </div>
-                </li>
-            </c:forEach>
-        </ul>
-    </div>
-
-    <a href="#" onclick="prepareEdit('','','','');">Lägg till ny uppgift</a>
-
-    <div id="myOverlayId" style="position:absolute; top:-1000px;">
-        <fieldset class="yui3-widget-bd portlet">
-            <legend>Lägg till/ändra uppgift</legend>
-            <form id="taskForm" name="taskForm">
-                <table id="taskTable">
-                    <tr>
-                        <td><input type="hidden" id="taskId" name="taskId"/> <label
-                                for="description">Beskrivning:<em>*</em></label>
-                        </td>
-                        <td><input type="text" id="description" name="description" size="10"/></td>
-                    </tr>
-                    <tr>
-                        <td><label for="dueDate">Klart datum:<em>*</em></label></td>
-                        <td>
-                            <div class="box">
-                                <div class="datefield"><input type="text" id="dueDate" name="dueDate" value="" size="10"
-                                                              class="readOnly"/></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="priority">Prioritet:</label></td>
-                        <td><select id="priority">
-                            <option value="LOW">Låg</option>
-                            <option value="MEDIUM" selected="selected">Medium</option>
-                            <option value="HIGH">Hög</option>
-                        </select></td>
-                    </tr>
-                    <tr>
-                        <td><input type="button" onclick="updateTask();" value="Spara"/></td>
-                        <td><input type="button" onclick="cancel();" value="Avbryt"/></td>
-                    </tr>
-                </table>
-            </form>
-        </fieldset>
-    </div>
+<div id="taskList" class="task-list-wrap">
+	<ul class="list tasks">
+		<c:forEach items="${taskList}" var="task">
+			<li id="task_${task.taskId}" class="task-item priority-${fn:toLowerCase(task.priority)} ${task.status== 'CLOSED' ? 'done' : ''}">
+				<input type="checkbox" class="todo" ${task.status== 'CLOSED' ? 'checked="true"' : ''} />
+				<label class="task-label">${task.description}</label>
+				<div ${task.status== 'CLOSED' ? 'class="task-edit-controls aui-helper-hidden"' : 'class="task-edit-controls"'}>
+					<ul class="task-edit-controls-list clearfix">
+						<li class="edit-task">
+	       					<a href="#">
+	       						<span>&Auml;ndra uppgift</span>
+	       					</a>
+						</li>
+						<li class="delete-task">
+	       					<a href="#">
+	       						<span>Ta bort uppgift</span>
+	       					</a>
+						</li>
+						<li class="task-due-date">${task.dueDate}</li>
+						<li class="task-priority aui-helper-hidden">${task.priority}</li>
+					</ul>
+				</div>
+               </li>
+		</c:forEach>
+	</ul>
+	
+	<div class="add-wrap">
+		<a id="<portlet:namespace />addTask" href="#">Lägg till ny uppgift</a>
+	</div>
+	
+	<div class="aui-helper-hidden">
+		<form method="post" name="editTaskForm" id="<portlet:namespace />editTaskForm" class="aui-form" action="">
+			<input id="taskId" name="taskId" type="hidden" value="" />
+			<fieldset class="aui-fieldset aui-w100">
+			<div class="aui-fieldset-content aui-column-content">
+				<span class="aui-field aui-field-text">
+					<span class="aui-field-content">
+						<label for="description" class="aui-field-label">Beskrivning *</label>
+						<span class="aui-field-element">
+							<input type="text" value="" style="width: 150px;" name="description" id="description" class="aui-field-input aui-field-input-text">
+						</span>
+					</span>
+				</span>
+				<span class="aui-field aui-field-text">
+					<span class="aui-field-content">
+						<label for="dueDate" class="aui-field-label">Klart datum *</label>
+						<span class="aui-field-element">
+							<input type="text" value="" style="width: 150px;" name="dueDate" id="dueDate" class="aui-field-input aui-field-input-text">
+						</span>
+					</span>
+				</span>
+				<span class="aui-field aui-field-select aui-field-menu">
+					<span class="aui-field-content">
+						<label for="priority" class="aui-field-label">Prioritet</label>
+						<span class="aui-field-element ">
+							<select name="priority" id="priority" class="aui-field-input aui-field-input-select aui-field-input-menu">
+								<option value="LOW">L&aring;g</option>
+								<option value="MEDIUM">Medium</option>
+								<option value="HIGH">H&ouml;g</option>
+							</select>
+						</span>
+					</span>
+				</span>
+			</div>
+			</fieldset>
+			<fieldset class="aui-fieldset aui-w100">
+				<div class="aui-dialog-button-container">
+					<a href="#" class="aui-dialog-button link-button" id="<portlet:namespace />saveTaskBtn">Spara</a>
+					<a href="#" class="aui-dialog-button link-button" id="<portlet:namespace />cancelTaskEditBtn">Avbryt</a>
+				</div>		
+			</fieldset>
+		</form>
+	</div>
+	
 </div>
+
+<script type="text/javascript">
+	AUI().ready('vgr-tasklist', function(A) {
+		var vgrTasklist = new A.VGRTasklist({
+			addTaskNode: '#<portlet:namespace />addTask',
+			cancelTaskEditBtn: '#<portlet:namespace />cancelTaskEditBtn',
+			contentBox: '#taskList',
+			cssDueDate: '.task-due-date',
+			cssEditControls: '.task-edit-controls',
+			editTaskForm: '#<portlet:namespace />editTaskForm',
+			saveTaskBtn: '#<portlet:namespace />saveTaskBtn',
+			portletNamespace: '<portlet:namespace />',
+			taskIdPrefix: 'task_',
+			urlDelete: '${deleteResource}',
+			urlSave: '${saveResource}'
+		}).render();
+	});
+</script>

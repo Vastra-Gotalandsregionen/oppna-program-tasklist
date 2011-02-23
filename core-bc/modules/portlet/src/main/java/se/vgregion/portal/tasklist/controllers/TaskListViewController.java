@@ -218,7 +218,7 @@ public class TaskListViewController {
         response.getWriter().print(generateTaskListxml);
     }
 
-    private String generateTaskListxml(List<Task> taskList) {
+    private String generateTaskListxmlOld(List<Task> taskList) {
         StringBuilder sb = new StringBuilder();
         sb.append("<ul class=\"list tasks\">");
         for (Task task : taskList) {
@@ -256,6 +256,56 @@ public class TaskListViewController {
         sb.append("</ul>");
         return sb.toString();
     }
+    
+    private String generateTaskListxml(List<Task> taskList) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<ul class=\"list tasks\">");
+        for (Task task : taskList) {
+            sb.append("<li id=\"task_" + task.getTaskId() + "\"" + " class=\"task-item priority-" + task.getPriority().toString().toLowerCase());
+            if (task.getStatus() == Status.CLOSED) {
+                sb.append(" done");
+            }
+            sb.append("\">");
+            
+            sb.append("<input type=\"checkbox\" class=\"todo\"");
+            if (task.getStatus() == Status.CLOSED) {
+                sb.append(" checked='true'");
+            }
+            sb.append(" />");
+            sb.append("<label class=\"task-label\">" + task.getDescription() + "</label>");
+            
+            sb.append("<div class=\"task-edit-controls");
+            if (task.getStatus() == Status.CLOSED) {
+                sb.append(" aui-helper-hidden");
+            }
+            sb.append("\">");
+            
+            sb.append("<ul class=\"task-edit-controls-list clearfix\">");
+            
+            sb.append("<li class=\"edit-task\">");
+            sb.append("<a href=\"#\">");
+            sb.append("<span>&Auml;ndra uppgift</span>");
+            sb.append("</a");
+            sb.append("</li>");
+            
+            sb.append("<li class=\"delete-task\">");
+            sb.append("<a href=\"#\">");
+            sb.append("<span>Ta bort uppgift</span>");
+            sb.append("</a");
+            sb.append("</li>");
+
+            sb.append("<li class=\"task-due-date\">" + task.getDueDate() + "</li>");
+            
+            sb.append("<li class=\"task-priority aui-helper-hidden\">" + task.getPriority() + "</li>");
+            
+            sb.append("</ul>");
+            
+            sb.append("</div>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
+    }
+    
 
     private Task createTaskFromParams(String taskId, String description, String priority, String userId,
             String dueDate, String status) {
