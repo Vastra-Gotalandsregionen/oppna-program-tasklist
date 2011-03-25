@@ -89,6 +89,7 @@ AUI().add('vgr-tasklist',function(A) {
 				NS: NS,
 				prototype: {
 					editOverlay: null,
+					hasBoundDialogComponents: false,
 					taskFormDatepicker: null,
 					initializer: function(config) {
 						var instance = this;
@@ -133,16 +134,20 @@ AUI().add('vgr-tasklist',function(A) {
 					_bindDialogComponents: function() {
 						var instance = this;
 						
-						var dialog = instance.editOverlay;
-						var taskId = dialog.get(TASK_ID);
-						var taskForm = instance.get(EDIT_TASK_FORM);
-						
-						var cancelBtn = instance.get(CANCEL_TASK_EDIT_BTN);
-						var saveBtn = instance.get(SAVE_TASK_BTN);
+						if(!instance.hasBoundDialogComponents) {
+							var dialog = instance.editOverlay;
+							var taskId = dialog.get(TASK_ID);
+							var taskForm = instance.get(EDIT_TASK_FORM);
+							
+							var cancelBtn = instance.get(CANCEL_TASK_EDIT_BTN);
+							var saveBtn = instance.get(SAVE_TASK_BTN);
 
-						// Bind dialog buttons
-						cancelBtn.on('click', instance._onCancelTaskEditClick, instance);
-						saveBtn.on('click', instance._onSaveTaskClick, instance);
+							// Bind dialog buttons
+							cancelBtn.on('click', instance._onCancelTaskEditClick, instance);
+							saveBtn.on('click', instance._onSaveTaskClick, instance);
+						}
+						
+						instance.hasBoundDialogComponents = true;
 					},
 					
 				    _cleanString: function(str) {
@@ -319,7 +324,6 @@ AUI().add('vgr-tasklist',function(A) {
 					_onDialogRender: function(e) {
 						var instance = this;
 						
-						/**/
 						var taskForm = instance.get(EDIT_TASK_FORM);
 						taskForm.plug(A.LoadingMask, {
 							background: '#555',
