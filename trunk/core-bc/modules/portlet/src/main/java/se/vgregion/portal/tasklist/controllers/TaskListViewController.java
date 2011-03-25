@@ -285,13 +285,13 @@ public class TaskListViewController {
             sb.append("<li class=\"edit-task\">");
             sb.append("<a href=\"#\">");
             sb.append("<span>&Auml;ndra uppgift</span>");
-            sb.append("</a");
+            sb.append("</a>");
             sb.append("</li>");
             
             sb.append("<li class=\"delete-task\">");
             sb.append("<a href=\"#\">");
             sb.append("<span>Ta bort uppgift</span>");
-            sb.append("</a");
+            sb.append("</a>");
             sb.append("</li>");
 
             sb.append("<li class=\"task-due-date\">" + task.getDueDate() + "</li>");
