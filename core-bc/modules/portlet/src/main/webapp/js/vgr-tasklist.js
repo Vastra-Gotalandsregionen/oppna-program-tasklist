@@ -208,7 +208,7 @@ AUI().add('vgr-tasklist',function(A) {
 							draggable: false,
 							height: 270,
 							modal: false,
-							stack: true,
+							stack: false,
 							width: 300
 						};
 						
@@ -319,6 +319,13 @@ AUI().add('vgr-tasklist',function(A) {
 					_onDialogRender: function(e) {
 						var instance = this;
 						
+						/**/
+						var taskForm = instance.get(EDIT_TASK_FORM);
+						taskForm.plug(A.LoadingMask, {
+							background: '#555',
+							strings: { loading: 'Sparar uppgift.' }
+						});
+						
 						instance._updateDialogForm();
 						instance._bindDialogComponents();
 					},
@@ -424,11 +431,15 @@ AUI().add('vgr-tasklist',function(A) {
 				        updateIO.on('success', function(e, id, xhr) {
 				        	var instance = this;
 				        	
+				        	var taskForm = instance.get(EDIT_TASK_FORM);
+				        	taskForm.loadingmask.hide();
+				        	
 				        	var responseHTML = xhr.responseText;
 				        	instance._updateTaskListHtml(responseHTML, true);
 				        }, instance);
 				        
-				        
+				        var taskForm = instance.get(EDIT_TASK_FORM);
+				        taskForm.loadingmask.show();
 				        
 				        updateIO.start();
 					},
@@ -444,12 +455,12 @@ AUI().add('vgr-tasklist',function(A) {
 							constrain2view: true,
 							destroyOnClose: true,
 							draggable: false,
-							height: 400,
+							height: 200,
 							modal: false,
 							resizable: false,
 							stack: true,
 							title: 'Fel',
-							width: 400
+							width: 200
 						};
 							
 						var alertOverlay = new A.Dialog(
@@ -605,7 +616,8 @@ AUI().add('vgr-tasklist',function(A) {
 			'aui-datepicker',
 			'aui-event',
 			'aui-dialog',
-			'aui-io'
+			'aui-io',
+			'aui-loading-mask'
       ]
 	}
 );
