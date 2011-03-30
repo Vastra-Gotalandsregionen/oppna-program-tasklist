@@ -210,10 +210,10 @@ AUI().add('vgr-tasklist',function(A) {
 							bodyContent: instance.get(EDIT_TASK_FORM),
 							centered: true,
 							constrain2view: true,
-							draggable: false,
+							draggable: true,
 							height: 270,
-							modal: false,
-							stack: false,
+							modal: true,
+							stack: true,
 							width: 300
 						};
 						
@@ -451,6 +451,7 @@ AUI().add('vgr-tasklist',function(A) {
 					_showAlert: function(title, msg) {
 						var instance = this;
 						
+						/*
 						var bodyContent = '<p>' + msg + '</msg>';
 						
 						var dialogOptions = {
@@ -475,6 +476,11 @@ AUI().add('vgr-tasklist',function(A) {
 						);
 						
 						alertOverlay.render();
+						*/
+						
+						// Alert should be replaced with aui form validation.
+						// Temporary show normal javascript alert
+						alert(msg);
 					},
 					
 					_showEditOverlay: function(taskId) {
@@ -600,7 +606,13 @@ AUI().add('vgr-tasklist',function(A) {
 				        }
 
 			            if (!isDateValid) {
-			            	instance._showAlert('Fel', taskData.dueDate + ' &auml;r inte ett giltigt datum! F&ouml;rv&auml;ntat format: YYYY-MM-DD.');			            	
+			            	//instance._showAlert('Fel', taskData.dueDate + ' &auml;r inte ett giltigt datum! F&ouml;rv&auml;ntat format: YYYY-MM-DD.');
+							// Temporary fix with alert
+							// &aring; = \u00E5
+							// &auml; = \u00E4
+							// &ouml; = \u00F6
+							//instance._showAlert('Fel', taskData.dueDate + ' är inte ett giltigt datum! Förväntat format: YYYY-MM-DD.');
+							instance._showAlert('Fel', taskData.dueDate + ' \u00E4r inte ett giltigt datum! F\u00F6rv\u00E4ntat format: YYYY-MM-DD.');
 			            }
 			            
 			            isValid = isDescriptionValid && isDateValid;
