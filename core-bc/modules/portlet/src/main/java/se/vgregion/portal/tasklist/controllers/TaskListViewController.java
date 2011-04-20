@@ -180,9 +180,14 @@ public class TaskListViewController {
         if (StringUtils.isBlank(priority)) {
             priority = Priority.MEDIUM.toString();
         }
-
+        // Spring appears to set a non-existing string to the string value "null"
+        if(taskId.equals("null")) {
+        	taskId = "";
+        }
+        
         Task task = createTaskFromParams(taskId, description, priority, userId, dueDate, status);
-        if ("".equals(taskId)) {
+
+        if (taskId.equals("")) {
             taskListService.addTask(task);
         } else {
             taskListService.updateTask(task);
@@ -207,7 +212,8 @@ public class TaskListViewController {
      */
     @ResourceMapping("delete")
     public void deleteTask(ResourceRequest request, ResourceResponse response,
-            @RequestParam(value = "taskId") long taskId) throws IOException {
+        @RequestParam(value = "taskId") long taskId) throws IOException {
+    	
         taskListService.deleteTask(taskId);
         @SuppressWarnings("unchecked")
         Map<String, ?> attributes = (Map<String, ?>) request.getAttribute(PortletRequest.USER_INFO);
@@ -310,13 +316,14 @@ public class TaskListViewController {
     private Task createTaskFromParams(String taskId, String description, String priority, String userId,
             String dueDate, String status) {
         Task task = new Task();
-        if (!"".equals(taskId)) {
+        if (!taskId.equals("")) {
             task.setTaskId(Long.valueOf(taskId));
         }
         task.setDescription(description);
         task.setPriority(Priority.valueOf(priority));
         task.setUserId(userId);
         Date dueDateObj = null;
+        
         try {
             SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy-MM-dd");
             simpleDateformat.setLenient(false);

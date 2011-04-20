@@ -93,6 +93,14 @@ AUI().add('vgr-tasklist',function(A) {
 					taskFormDatepicker: null,
 					initializer: function(config) {
 						var instance = this;
+						
+						new A.Console({
+							//height: '250px',
+							newestOnTop: false,
+							style: 'block',
+							visible: true//,
+							//width: '600px'
+						}).render();
 
 						// Define some phrases
 						instance.set(TXT_ADD_TASK, 'L&auml;gg till uppgift');
@@ -413,6 +421,8 @@ AUI().add('vgr-tasklist',function(A) {
 					_persistTask: function(taskData) {
 						var instance = this;
 						
+						A.log('_persistTask started.');
+						
 						var statusTxt = taskData.status ? 'CLOSED' : 'OPEN';
 						
 				        var postData = {
@@ -435,6 +445,8 @@ AUI().add('vgr-tasklist',function(A) {
 				        updateIO.on('success', function(e, id, xhr) {
 				        	var instance = this;
 				        	
+				        	A.log('updateIO on success callback.');
+				        	
 				        	var taskForm = instance.get(EDIT_TASK_FORM);
 				        	taskForm.loadingmask.hide();
 				        	
@@ -446,6 +458,7 @@ AUI().add('vgr-tasklist',function(A) {
 				        taskForm.loadingmask.show();
 				        
 				        updateIO.start();
+				        A.log('updateIO started.');
 					},
 					
 					_showAlert: function(title, msg) {
@@ -554,11 +567,14 @@ AUI().add('vgr-tasklist',function(A) {
 					
 					_updateTaskListHtml: function(html, closeOverlay) {
 						var instance = this;
+						
+						A.log('_updateTaskListHtml started.');
 
 						var contentBox = instance.get(CONTENT_BOX);
 						var taskList = contentBox.one('ul.tasks');
 						
 						if(taskList) {
+							A.log('_updateTaskListHtml found taskList.');
 							taskList.purge();
 							taskList.remove();
 						}
@@ -629,6 +645,7 @@ AUI().add('vgr-tasklist',function(A) {
 	},1, {
 		requires: [
 			'aui-base',
+			'console',
 			'aui-datepicker',
 			'aui-event',
 			'aui-dialog',
