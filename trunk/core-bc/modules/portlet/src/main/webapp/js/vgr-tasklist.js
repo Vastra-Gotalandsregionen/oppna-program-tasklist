@@ -94,14 +94,9 @@ AUI().add('vgr-tasklist',function(A) {
 					initializer: function(config) {
 						var instance = this;
 						
-						new A.Console({
-							//height: '250px',
-							newestOnTop: false,
-							style: 'block',
-							visible: true//,
-							//width: '600px'
-						}).render();
-
+						// Init debugger console
+						//instance._initConsole();
+						
 						// Define some phrases
 						instance.set(TXT_ADD_TASK, 'L&auml;gg till uppgift');
 						instance.set(TXT_CHANGE_TASK, '&Auml;ndra uppgift');
@@ -298,6 +293,18 @@ AUI().add('vgr-tasklist',function(A) {
 						var taskNodeId = taskNode.getAttribute('id');
 						
 						return taskNodeId;
+					},
+					
+					_initConsole: function() {
+						var instance = this;
+						
+						new A.Console({
+							//height: '250px',
+							newestOnTop: false,
+							style: 'block',
+							visible: true//,
+							//width: '600px'
+						}).render();
 					},
 
 					_onAddTaskNodeClick: function(e) {
