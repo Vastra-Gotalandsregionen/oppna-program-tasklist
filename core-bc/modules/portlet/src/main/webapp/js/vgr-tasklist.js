@@ -27,6 +27,7 @@ AUI().add('vgr-tasklist',function(A) {
 		EDIT_TASK_FORM = 'editTaskForm',
 		NAME = 'vgr-tasklist',
 		NS = 'vgr-tasklist',
+		PORTLET_NAMESPACE = 'portletNamespace',
 		SAVE_TASK_BTN = 'saveTaskBtn',
 		TASK_DESCRIPTION = 'taskDescription',
 		TASK_DUE_DATE = 'taskDueDate',
@@ -71,6 +72,9 @@ AUI().add('vgr-tasklist',function(A) {
 					editTaskForm: {
 						setter: A.one
 					},
+					portletNamespace: {
+						value: ''
+					},
 					saveTaskBtn: {
 						setter: A.one
 					},
@@ -90,6 +94,7 @@ AUI().add('vgr-tasklist',function(A) {
 				prototype: {
 					editOverlay: null,
 					hasBoundDialogComponents: false,
+					portletTitleNode: null,
 					taskFormDatepicker: null,
 					initializer: function(config) {
 						var instance = this;
@@ -100,6 +105,14 @@ AUI().add('vgr-tasklist',function(A) {
 						// Define some phrases
 						instance.set(TXT_ADD_TASK, 'L&auml;gg till uppgift');
 						instance.set(TXT_CHANGE_TASK, '&Auml;ndra uppgift');
+						
+						// Define portletWrap
+						var portletNamespace = instance.get(PORTLET_NAMESPACE);
+						var portletWrap = A.one('#p_p_id' + portletNamespace );
+						
+						var portletTitleNode = portletWrap.one('h1.portlet-title span.portlet-title-text');
+
+						instance.portletTitleNode = portletTitleNode;
 					},
 					
 					renderUI: function() {
@@ -428,8 +441,6 @@ AUI().add('vgr-tasklist',function(A) {
 					_persistTask: function(taskData) {
 						var instance = this;
 						
-						A.log('_persistTask started.');
-						
 						var statusTxt = taskData.status ? 'CLOSED' : 'OPEN';
 						
 				        var postData = {
@@ -452,8 +463,6 @@ AUI().add('vgr-tasklist',function(A) {
 				        updateIO.on('success', function(e, id, xhr) {
 				        	var instance = this;
 				        	
-				        	A.log('updateIO on success callback.');
-				        	
 				        	var taskForm = instance.get(EDIT_TASK_FORM);
 				        	taskForm.loadingmask.hide();
 				        	
@@ -465,7 +474,6 @@ AUI().add('vgr-tasklist',function(A) {
 				        taskForm.loadingmask.show();
 				        
 				        updateIO.start();
-				        A.log('updateIO started.');
 					},
 					
 					_showAlert: function(title, msg) {
@@ -572,20 +580,40 @@ AUI().add('vgr-tasklist',function(A) {
 						
 					},
 					
+					_updatePortletTitle: function() {
+						var instance = this;
+						
+						var contentBox = instance.get(CONTENT_BOX);
+						var taskList = contentBox.one('ul.tasks');
+						var taskCount = 0;
+
+						if(taskList) {
+							var taskItems = taskList.get('children');
+							taskCount = taskItems.size();
+						}
+
+						var titleText = instance.portletTitleNode.html();
+						
+						var regex_size = /(?:\(\d+\))/;
+						
+						var titleTextNew = titleText.replace(regex_size, '(' + taskCount + ')');
+						
+						instance.portletTitleNode.html(titleTextNew);
+					},
+					
 					_updateTaskListHtml: function(html, closeOverlay) {
 						var instance = this;
 						
-						A.log('_updateTaskListHtml started.');
-
 						var contentBox = instance.get(CONTENT_BOX);
 						var taskList = contentBox.one('ul.tasks');
 						
 						if(taskList) {
-							A.log('_updateTaskListHtml found taskList.');
 							taskList.purge();
 							taskList.remove();
 						}
 						contentBox.prepend(html);
+						
+						instance._updatePortletTitle();
 						
 						instance._bindTaskListComponents();
 						
