@@ -39,9 +39,11 @@
         <property name="incrementerName" value="vgr_task_sequence"/>
     </bean>
 
+	<!-- 
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:comp/env/jdbc/PortalDbPool"/>
     </bean>
+     -->
 	
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
@@ -54,14 +56,14 @@
     </property>
   </bean>	
 	
-	<!-- 
+	<!-- -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${database.driver}" />
 		<property name="url" value="${database.url}" />
 		<property name="username" value="${database.user}" />
 		<property name="password" value="${database.password}" />
 	</bean>	
-	 -->
+	 
 
     <bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
         <constructor-arg ref="dataSource"/>
