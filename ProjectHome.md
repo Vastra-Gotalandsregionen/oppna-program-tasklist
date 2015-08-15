@@ -1,0 +1,1 @@
+Manage private tasks. Initially implemented as a portlet for Liferay Portal.
